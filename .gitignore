@@ -1,0 +1,18 @@
+# Model files
+*.scs
+*.nmos
+*.pmos
+*.nbsim4
+*.pbsim4
+*.spice
+
+# Log files
+*.log
+
+# Output files
+*.csv
+gp*/*
+
+# Batch files
+*.bat
+
