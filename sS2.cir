@@ -16,7 +16,7 @@
 * limitations under the License.
 
 * The top-level control is to switch which of the next lines are commented.
-.param T=27 Div=10 mn=1 mp=2 o1=.09 h1=.30 o2=.36 h2=.45    $ defaults for control lines; override if needed, otherwise leave these alone
+.param T=27 Div=100 mn=1 mp=2 o1=.09 h1=.30 o2=.36 h2=.45   $ defaults for control lines; override if needed, otherwise leave these alone
 .param o1=.20 h1=.20 o2=.40 h2=.40                          $ defaults for control lines; override if needed, otherwise leave these alone
 
 *.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
