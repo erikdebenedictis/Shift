@@ -31,16 +31,18 @@
 *** RUN 1 Builtin BSIM 3
 ***param MD=3 J_S=1 Vp=9V       Hz=1e6      wX=1  ww=5u       ll=5u       Cw=.01p     Cb=5e-12    xl=9        xn=5  xh=5        yl=1e6      yn=1  yh=5e7
 ***param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
-*param MD=3 Vt=2.5v Vp=5.0v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*.param MD=3 Vt=2.5v Vp=5.0v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
 * 0 Adia , 3 , 8.33834E-13 , 5.41552E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 105.894 4/16/22 6:07 4130
+* 0 Adia , 3 , 1.99904E-12 , 6.27097E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 76.093 4/18/22 6:30 4130
 
 *** RUN 2 Speculative BSIM 4
 ***param MD=4 J_S=0 Vp=.275V    Hz=1e6      wX=1  ww=600e-9   ll=20e-9    Cw=.01p     Cb=5e-14    xl=.275     xn=5  xh=.175     yl=1e6      yn=1  yh=25e6
 *param MD=4 Vt=.12v Vp=.28v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
 * 0 Adia , 4 , 3.65796E-14 , 3.86714E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 164.278 4/16/22 6:01 4130
+* 0 Adia , 4 , 1.15347E-13 , 4.47025E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 166.608
 
-*** RUN 3 Sky130
-*param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*** RUN 3 Sky130 (this control line enabled by default)
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.7       xn=1 xh=1.7      yl=.465     yn=-1 yh=.465
 * 0 Adia , 5 , 2.79583E-14 , 1.29906E-14 , 1.4 , 0.4675 , 1.4 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 158.317 4/12/22 4:23 4130
 *param MD=5 Vt=.75v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34     yl=.4625  yn=-1 yh=.4625
 * 3 Adia , 5 , 2.79895E-14 , 1.03621E-14 , 1.5 , 0.4625 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.4625 , 185.288 4/12/22 7:06 4130
@@ -48,18 +50,19 @@
 * 0 Adia , 5 , 2.96714E-14 , 9.45632E-15 , 1.6 , 0.465 , 1.6 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.642 4/12/22 4:18 4130
 *param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.36      yl=.465    yn=-1 yh=.48
 * 0 Adia , 5 , 3.23181E-14 , 9.34458E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.88 4/12/22 3:58 4130
+* 0 Adia , 5 , 5.74007E-14 , 9.83645E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 158.037 4/18/22 6:23 4130
 
 *** RUN 4 [undisclosed soi]
-.param MD=6 Vt=.12v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*param MD=6 Vt=.12v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
 * 0 Adia , 6 , 1.57512E-13 , 3.94595E-14 , 1.5 , 0.4675 , 1.5 , 1.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 187.226 4/16/22 8:05 4130
 * 0 Adia , 6 , 3.99675E-13 , 3.93922E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 237.862 4/16/22 7:49 4130
-
+* 0 Adia , 6 , 4.87778E-13 , 4.44046E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 225.348 4/18/22 5:45 4130
 *.param MD=5 Vt=.75v Vp=3v     Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-16    Cx=5e-18    xl=3        xn=1  xh=1.2      yl=5e5      yn=3  yh=2e6
 
 * Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.22185E-14 to 3.18945E-14 (factor of 1.3237) /20
 * Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.19894E-14 to 3.21366E-14 (factor of 1.3066) /100
 .param xvar=.38 yvar=.46                                    $ optional dummy variables that will be modified by the looping code in saa.cir
-.param h1=xvar h2=yvar
+*.param h1=xvar h2=yvar
 *.param Vp=xvar
 
 * The following equations are correct, but in the circuit Cg and Cx are in parallel with the simulated devices, which are not accounted for

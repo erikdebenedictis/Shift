@@ -265,8 +265,8 @@ reset                                                       $ this command resca
 
 run
 
-let tinit=$&pPer*1                                          $ this and the next line sets the dividing line between initialization and the measurement period
-let nmeas=pPds-1
+let tinit=$&pPer*3                                          $ this and the next line sets the dividing line between initialization and the measurement period
+let nmeas=pPds-3
 * delete next four lines at some point
 meas tran E_nRERL1us INTEG v(16) from=0 to=$&tinit          $ Reintegrate instantaneous power in total for 5 us, with result in a variable
 meas tran E_nRERLLev INTEG v(16) from=$&tinit to=$&pW       $ Reintegrate instantaneous power in total from 5 us to 400 us, with result in a variable
