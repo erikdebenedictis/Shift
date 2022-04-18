@@ -1,0 +1,414 @@
+* Common Adiabatic Analysis File -- intended to be included from a circuit file
+* [Under ngspice 36, { sS2, sQ2, snR, saa }.cir are an introduction to S2LAL, Q2LAL, and nRERL circuit.  Use files in vcs checked in h:mm PM d/mm/2022 (public)]
+
+* Copyright 2022 Zettaflops, LLC
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+
+*     http://www.apache.org/licenses/LICENSE-2.0
+
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+*.param xvar=1 yvar=1                                        $ these are the loop iteration parameters
+
+.param periods=10                                           $ number of repetitions of the basic waveform
+.param period = int(1e9/Hz+.33)/1e9                         $ 1/Hz rounded to nearest 1 ns
+.param Wid= periods*period                                  $ currently same as simlen
+
+.param Porch=.01                                            $ A tick as this proportion of 0 V gap at the start and end, so the spacing is twice this
+*.param o1=.15 h1=.15                                       $ Ramp tranisition 1 default parameters
+*.param o1=.075 h1=.17                                      $ Ramp tranisition 2 default parameters
+*.param o2=.165 h2=.34                                      $ To use an optimal wave shape, uncomment this line and provide different numbers
+*.param o1=.09 h1=.30 o2=.36 h2=.45
+
+*** DEVICE MODELS
+.MODEL PBSIM3 pmos(LEVEL=49 version=3.3.0)                  $ MD=2 MD=3: default BSIM 3.3 model
+.MODEL NBSIM3 nmos(LEVEL=49 version=3.3.0)                  $ MD=2 MD=3: At 9v, the 1/2CV2 jump is 2.8e-9 (3e-7 time) -> 69 pF; 69 pF/400 -> .17 pF/gate as defined
+.inc ./modelcard.nmos                                       $ MD=4: in ngspice 34: "The BSIM4 modelcard below was not extracted from any real technologies"
+.inc ./modelcard.pmos                                       $ MD=4: At .25v, the 1/2CV2 jump is 3e-15 (2.5e-6 time) --> .09 pF; .09 pF/400 --> .24 fF/gate as defined
+.option scale = 1                                           $ MD=5: Sky130. Sky130_COMMENTOUT (applies to subsequent five lines as well) See [DeBenedictis 21]
+*.inc "C:\Sky130\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners\tt.spice"
+.inc sky130_fd_pr__nfet_01v8__tt.pm3.spice                  $ C:\Sky130\skywater-pdk\libraries\sky130_fd_pr\latest\cells\nfet_01v8\sky130_fd_pr__nfet_01v8__tt.pm3.spice
+.inc sky130_fd_pr__pfet_01v8__tt.pm3.spice                  $ C:\Sky130\skywater-pdk\libraries\sky130_fd_pr\latest\cells\pfet_01v8\sky130_fd_pr__pfet_01v8__tt.pm3.spice
+*.inc sky130_fd_pr__pfet_01v8_hvt__tt.pm3.spice              $ C:\Sky130\skywater-pdk\libraries\sky130_fd_pr\latest\cells\pfet_01v8_hvt\sky130_fd_pr__pfet_01v8_hvt__tt.pm3.spice
+.option scale = 1.0001                                      $ MD=5: Sky130. See [DeBenedictis 21]
+.inc ./ps_nsoi1_uni.58.scs                                  $ MD=6: UNDISCLOSED_COMMENTOUT [undisclosed SOI]
+.inc ./ps_psoi1_uni.58.scs                                  $ MD=6: UNDISCLOSED_COMMENTOUT [undisclosed SOI]
+
+*** INTERFACE FROM CIRCUIT UNDER TEST TO DEVICE MODELS
+* An nFET or pFET is specified as a minimum size transistor scaled in length by n and width by m. Depending on the PDK, these subcircuits may scale the width by m or
+* replicate a minimum width transistor m times using ngspice's m parameter.
+
+.subckt nFET nd ng ns nb n=1 m=1                            $ wrapper for nFETs of various models
+.if (MD=2)                                                  $ MD=2
+m02 nd ng ns nb NBSIM3 l='n*ll' w='m*mn*ww*wX'              $ ignore Ps and Pd due to insure compatibility
+.elseif (MD=3)                                              $ MD=3
+m03 nd ng ns nb NBSIM3 m='m*wX' l='n*ll' w='mn*ww' Ps='n*ll+mn*ww' Pd='n*ll+mn*ww'
+.elseif (MD=4)                                              $ MD=4 source D:\ngspice\ngspice-34_64\Spice64\examples\xspice\table\modelcards
+*m04 nd ng ns nb NBSIM4 l='n*ll' w='m*mn*ww*wX' $ Ps='n*ll+m*mn*ww*wX' Pd='n*ll+m*mn*ww*wX'
+m04 nd ng ns nb NBSIM4 m='m*wX' l='n*ll' w='mn*ww' $ Ps='n*ll+mn*ww' Pd='n*ll+mn*ww'
+.elseif (MD=5)                                              $ MD=5 after [holvo 21] Lacks ability to scale length because of binning
+xM05 nd ng ns nb sky130_fd_pr__nfet_01v8 m='m*wX*mn' l='ll' w='ww' as='ww*ll*1.77' ad='ww*ll*1.77' ps='(ww+ll)*2.4' pd='(ww+ll)*2.4'    $ Sky_COMMENTOUT
+.else                                                       $ MD=6 [undisclosed SOI]
+m06 nd ng ns nb ps_nsoi1_uni m='m*wX' l='n*ll' w='mn*ww' Ps='mn*ww+n*ll' Pd='mn*ww+n*ll'    $ UNDISCLOSED_COMMENTOUT [undisclosed SOI]
+.endif
+.ends
+
+.subckt pFET nd ng ns nb n=1 m=1                            $ wrapper for pFETs of various models
+.if (MD=2)                                                  $ MD=2
+m02 nd ng ns nb PBSIM3 l='n*ll' w='m*mp*ww*wX'              $ ignore Ps and Pd due to insure compatibility
+.elseif (MD=3)                                              $ MD=3
+m03 nd ng ns nb PBSIM3 m='m*wX' l='n*ll' w='mp*ww' Ps='n*ll+mp*ww' Pd='n*ll+mp*ww'
+.elseif (MD=4)                                              $ MD=4
+*m04 nd ng ns nb PBSIM4 l='n*ll' w='m*mp*ww*wX' $ Ps='n*ll+mp*ww' Pd='n*ll+mp*ww'
+m04 nd ng ns nb PBSIM4 m='m*wX' l='n*ll' w='mp*ww' $ Ps='n*ll+m*mp*ww*wX' Pd='n*ll+m*mp*ww*wX'
+.elseif (MD=5)                                              $ MD=5 after [holvo 21] Lacks ability to scale length because of binning
+xM05 nd ng ns nb sky130_fd_pr__pfet_01v8 m='m*wX*mp' l='ll' w='ww' as='ww*ll*1.77' ad='ww*ll*1.77' ps='(ww+ll)*2.4' pd='(ww+ll)*2.4'    $ Sky_COMMENTOUT
+**xM05 nd ng ns nb sky130_fd_pr__pfet_01v8_hvt m='m*wX*mp' l='ll' w='ww' as='ww*ll*1.77' ad='ww*ll*1.77' ps='(ww+ll)*2.4' pd='(ww+ll)*2.4'    $ Sky_COMMENTOUT
+.else                                                       $ MD=6 [undisclosed SOI]
+m06 nd ng ns nb ps_psoi1_uni m='m*wX' l='n*ll' w='mp*ww' Ps='mp*ww+n*ll' Pd='mp*ww+n*ll'    $ UNDISCLOSED_COMMENTOUT [undisclosed SOI]
+.endif
+.ends
+
+*** POWER-CLOCKS
+.param gg=0V vq='Vx' vv='Vp' vs ='Vp-Vt' vb = 0v
+VGnR   70  0 DC '0'                                         $ ngspice has a default ground of 0, but circuits should use 70
+VVnR   71 70 DC 'nv'                                        $ this is the DC supply rail
+
+*** CLOCKS -- 8 clock phases [Complexity Fig. 4b]
+.param simlen=periods*period                                $ length of the plot in time
+.param tick=period/8
+.param ticks=simlen/tick                                    $ number of ticks in the simulation
+.param tstep=25NS*period/10u*periods/Div                    $ time of a simulation step, so number of steps is tick*ticks/tstep
+
+* Parameters for three-segment ramp
+.param Ramp=(1-2*Porch)*tick                                $ waveform is parameterized so there is a "porch" on either side of a ramp
+.param PPT=Porch*tick                                       $ one PPT at beginning and end of sequence, two of these PPTs between ramps
+.param Rw=o1*Ramp vj=h1*vv                                  $ transition 1
+.param Rx=o2*Ramp vk=h2*vv                                  $ transition 2
+.param Ry=(1-o2)*Ramp vl=(1-h2)*vv                          $ transition 3
+.param Rz=(1-o1)*Ramp vm=(1-h1)*vv                          $ transition 4
+.param Rp=Ramp                                              $ total length of ramp
+
+* The clocks comprise a series of transitions (separated by PPTs). Starting at the beginning of the three-phase cycle, the clock are computed by repeatedly
+* incrementing the time by the length of a transition and a PPT.
+.param t0=PPT           u0=t0+Rw v0=t0+Rx w0=t0+Ry x0=t0+Rz y0=t0+Rp
+.param t1=t0+Ramp+2*PPT u1=t1+Rw v1=t1+Rx w1=t1+Ry x1=t1+Rz y1=t1+Rp
+.param t2=t1+Ramp+2*PPT u2=t2+Rw v2=t2+Rx w2=t2+Ry x2=t2+Rz y2=t2+Rp
+.param t3=t2+Ramp+2*PPT u3=t3+Rw v3=t3+Rx w3=t3+Ry x3=t3+Rz y3=t3+Rp
+.param t4=t3+Ramp+2*PPT u4=t4+Rw v4=t4+Rx w4=t4+Ry x4=t4+Rz y4=t4+Rp
+.param t5=t4+Ramp+2*PPT u5=t5+Rw v5=t5+Rx w5=t5+Ry x5=t5+Rz y5=t5+Rp
+.param t6=t5+Ramp+2*PPT u6=t6+Rw v6=t6+Rx w6=t6+Ry x6=t6+Rz y6=t6+Rp
+.param t7=t6+Ramp+2*PPT u7=t7+Rw v7=t7+Rx w7=t7+Ry x7=t7+Rz y7=t7+Rp
+.param t9=t7+Ramp+PPT
+
+* Q2LAL clamp waveforms that are high for one tick to clamp signals to ground. VCi is high on tick i-1. These are for testing only.
+* Each can be generated with four transistors from existing clocks. They only connect to transistor gates, so they do not need a lot of drive capability.
+.param qg='gg' qj='vj' qk='vk' ql='vl' qm='vm' qv='vv'
+Vc0 720 70 DC 'qv' PWL('0' 'qv' 't0' 'qv' 'u0' 'qm' 'v0' 'ql' 'w0' 'qk' 'x0' 'qj' 'y0' 'qg' 't6' 'qg' 'u6' 'qj' 'v6' 'qk' 'w6' 'ql' 'x6' 'qm' 'y6' 'qv' 't9' 'qv' r='0')
+Vc1 721 70 DC 'qv' PWL('0' 'qv' 't1' 'qv' 'u1' 'qm' 'v1' 'ql' 'w1' 'qk' 'x1' 'qj' 'y1' 'qg' 't7' 'qg' 'u7' 'qj' 'v7' 'qk' 'w7' 'ql' 'x7' 'qm' 'y7' 'qv' 't9' 'qv' r='0')
+Vc2 722 70 DC 'qg' PWL('0' 'qg' 't0' 'qg' 'u0' 'qj' 'v0' 'qk' 'w0' 'ql' 'x0' 'qm' 'y0' 'qv' 't2' 'qv' 'u2' 'qm' 'v2' 'ql' 'w2' 'qk' 'x2' 'qj' 'y2' 'qg' 't9' 'qg' r='0')
+Vc3 723 70 DC 'qg' PWL('0' 'qg' 't1' 'qg' 'u1' 'qj' 'v1' 'qk' 'w1' 'ql' 'x1' 'qm' 'y1' 'qv' 't3' 'qv' 'u3' 'qm' 'v3' 'ql' 'w3' 'qk' 'x3' 'qj' 'y3' 'qg' 't9' 'qg' r='0')
+Vc4 724 70 DC 'qg' PWL('0' 'qg' 't2' 'qg' 'u2' 'qj' 'v2' 'qk' 'w2' 'ql' 'x2' 'qm' 'y2' 'qv' 't4' 'qv' 'u4' 'qm' 'v4' 'ql' 'w4' 'qk' 'x4' 'qj' 'y4' 'qg' 't9' 'qg' r='0')
+Vc5 725 70 DC 'qg' PWL('0' 'qg' 't3' 'qg' 'u3' 'qj' 'v3' 'qk' 'w3' 'ql' 'x3' 'qm' 'y3' 'qv' 't5' 'qv' 'u5' 'qm' 'v5' 'ql' 'w5' 'qk' 'x5' 'qj' 'y5' 'qg' 't9' 'qg' r='0')
+Vc6 726 70 DC 'qg' PWL('0' 'qg' 't4' 'qg' 'u4' 'qj' 'v4' 'qk' 'w4' 'ql' 'x4' 'qm' 'y4' 'qv' 't6' 'qv' 'u6' 'qm' 'v6' 'ql' 'w6' 'qk' 'x6' 'qj' 'y6' 'qg' 't9' 'qg' r='0')
+Vc7 727 70 DC 'qg' PWL('0' 'qg' 't5' 'qg' 'u5' 'qj' 'v5' 'qk' 'w5' 'ql' 'x5' 'qm' 'y5' 'qv' 't7' 'qv' 'u7' 'qm' 'v7' 'ql' 'w7' 'qk' 'x7' 'qj' 'y7' 'qg' 't9' 'qg' r='0')
+
+* These are the Q2LAL power clocks, including separate fast and slow clocks
+Vf0 110 70 DC 'qg' PWL('0' 'qg' 't0' 'qg' 'u0' 'qj' 'v0' 'qk' 'w0' 'ql' 'x0' 'qm' 'y0' 'qv' 't4' 'qv' 'u4' 'qm' 'v4' 'ql' 'w4' 'qk' 'x4' 'qj' 'y4' 'qg' 't9' 'qg' r='0')
+Vf1 111 70 DC 'qg' PWL('0' 'qg' 't1' 'qg' 'u1' 'qj' 'v1' 'qk' 'w1' 'ql' 'x1' 'qm' 'y1' 'qv' 't5' 'qv' 'u5' 'qm' 'v5' 'ql' 'w5' 'qk' 'x5' 'qj' 'y5' 'qg' 't9' 'qg' r='0')
+Vf2 112 70 DC 'qg' PWL('0' 'qg' 't2' 'qg' 'u2' 'qj' 'v2' 'qk' 'w2' 'ql' 'x2' 'qm' 'y2' 'qv' 't6' 'qv' 'u6' 'qm' 'v6' 'ql' 'w6' 'qk' 'x6' 'qj' 'y6' 'qg' 't9' 'qg' r='0')
+Vf3 113 70 DC 'qg' PWL('0' 'qg' 't3' 'qg' 'u3' 'qj' 'v3' 'qk' 'w3' 'ql' 'x3' 'qm' 'y3' 'qv' 't7' 'qv' 'u7' 'qm' 'v7' 'ql' 'w7' 'qk' 'x7' 'qj' 'y7' 'qg' 't9' 'qg' r='0')
+Vf4 114 70 DC 'qv' PWL('0' 'qv' 't0' 'qv' 'u0' 'qm' 'v0' 'ql' 'w0' 'qk' 'x0' 'qj' 'y0' 'qg' 't4' 'qg' 'u4' 'qj' 'v4' 'qk' 'w4' 'ql' 'x4' 'qm' 'y4' 'qv' 't9' 'qv' r='0')
+Vf5 115 70 DC 'qv' PWL('0' 'qv' 't1' 'qv' 'u1' 'qm' 'v1' 'ql' 'w1' 'qk' 'x1' 'qj' 'y1' 'qg' 't5' 'qg' 'u5' 'qj' 'v5' 'qk' 'w5' 'ql' 'x5' 'qm' 'y5' 'qv' 't9' 'qv' r='0')
+Vf6 116 70 DC 'qv' PWL('0' 'qv' 't2' 'qv' 'u2' 'qm' 'v2' 'ql' 'w2' 'qk' 'x2' 'qj' 'y2' 'qg' 't6' 'qg' 'u6' 'qj' 'v6' 'qk' 'w6' 'ql' 'x6' 'qm' 'y6' 'qv' 't9' 'qv' r='0')
+Vf7 117 70 DC 'qv' PWL('0' 'qv' 't3' 'qv' 'u3' 'qm' 'v3' 'ql' 'w3' 'qk' 'x3' 'qj' 'y3' 'qg' 't7' 'qg' 'u7' 'qj' 'v7' 'qk' 'w7' 'ql' 'x7' 'qm' 'y7' 'qv' 't9' 'qv' r='0')
+
+* These are the nRERL power clocks, including separate fast and slow clocks
+.param  ng = 'gg'    n2 = 'vj'    n3 = 'vm'    nv = 'vv'    ns = 'vs'    nq = 'vq'
+
+*                         t     v    t    v    t    v    t    v    t    v
+Vdat0 124 70 DC 'ng' PWL('0'   'ng' 't0' 'ng' 'u0' 'n2' 'x0' 'ns' 'y0' 'ns' 
++                                   't1' 'ns' 'u1' 'ns' 'x1' 'nq' 'y2' 'nq'
++                                   't3' 'nq' 'u3' 'nq' 'x3' 'ns' 'y3' 'ns'
++                                   't4' 'ns' 'u4' 'ns' 'x4' 'n2' 'y4' 'ng' 't9' 'ng' r='0')
+VbootP  123 70 DC 'nv' PWL('0' 'nv' 't9-1e-10' 'nv' 't9' 'ng' '3*t9-1e-10' 'ng' '3*t9' 'ng' '4*t9' 'ng' r='3*t9')
+
+* power and energy calculation
+B0 70 16 V=0                                                $ compute power delivered to circuit
++ +I(Vc0)*v(720)+I(Vc1)*v(721)+I(Vc2)*v(722)+I(Vc3)*v(723)+I(Vc4)*v(724)+I(Vc5)*v(725)+I(Vc6)*v(726)+I(Vc7)*v(727)  $clamps
++ +I(Vf0)*v(110)+I(Vf1)*v(111)+I(Vf2)*v(112)+I(Vf3)*v(113)+I(Vf4)*v(114)+I(Vf5)*v(115)+I(Vf6)*v(116)+I(Vf7)*v(117)
++ +I(VGnR)*v(70)
+*+ +I(Vdat0)*v(124)
+*+ +I(VbootP)*v(123)
+A0 16 17 power_tally
+B1 70 18 V=0                                                $ compute net current to circuit to make sure we all currents accounted for (must be 0)
++ +I(Vc0)+I(Vc1)+I(Vc2)+I(Vc3)+I(Vc4)+I(Vc5)+I(Vc6)+I(Vc7)  $ clamps
++ +I(Vf0)+I(Vf1)+I(Vf2)+I(Vf3)+I(Vf4)+I(Vf5)+I(Vf6)+I(Vf7)  $ eight clocks
++ +I(VGnR)                                                  $ DC and substrate
+*+ +I(Vdat0)
+*+ +I(VbootP)
+A1 18 19 power_tally
+
+B2 70 20 V=0                                                $ nRERL section 20 is instantaneous power in total
++ +I(vdat0)*v(124)                                          $ Initialization waveforms
++ +I(Vf0)*v(110)+I(Vf1)*v(111)+I(Vf2)*v(112)+I(Vf3)*v(113)+I(Vf4)*v(114)+I(Vf5)*v(115)+I(Vf6)*v(116)+I(Vf7)*v(117)
++ +I(VGnR)*v(70)+I(VVnR)*v(71)                              $ DC and substrate
+A2 20 21 power_tally                                        $ 21 is cumulative energy as a function of time
+B3 70 22 V=0                                                $ 22 is instantaneous power associated with startup
++ +I(vdat0)
++ +I(Vf0)+I(Vf1)+I(Vf2)*I(Vf3)+I(Vf4)+I(Vf5)+I(Vf6)+I(Vf7)
++ +I(VGnR)+I(VVnR)                                          $ DC and substrate
+A3 22 23 power_tally                                        $ 23 is cumulative energy as a function of time for startup
+.model power_tally int(in_offset=0.0 gain=1.0 out_lower_limit=-1e12 out_upper_limit=1e12 limit_range=1e-9 out_ic=0.0)
+
+.option noinit acct
+
+***************************************************************************************************
+* NGSPICE CONTROL AREA
+.TRAN 'tstep' 'ticks*tick'
+.csparam pMD = 'MD'
+.csparam pVp = 'Vp'
+.csparam pHz = 'Hz'
+.csparam pwX = 'wX'
+.csparam pWS = 'mn'
+.csparam pWL = '99'
+
+.csparam pxl = 'xl'                                         $ low x sweep value
+.csparam pxn = 'xn'                                         $ number of simulations in x
+.csparam pxh = 'xh'                                         $ high x sweep value
+.csparam pyl = 'yl'                                         $ low y sweep value
+.csparam pyn = 'yn'                                         $ number of simulations in y
+.csparam pyh = 'yh'                                         $ high y sweep value.csparam slen = 'simlen*1e6'
+
+.csparam pPer = 'period'
+.csparam prds = 'periods'
+.csparam pPds = 'periods-1'
+.csparam pW = 'Wid'
+.csparam tste = 'tstep*1e9'
+.csparam fstp = 'T'
+
+.csparam pGnT1 = 'o1'
+.csparam pGnV1 = 'h1'
+.csparam pGnT2 = 'o2' 
+.csparam pGnV2 = 'h2'
+
+.csparam pCg = 'Cg'                                         $ Gate capacitance [nRERL, Fig. 2a]
+.csparam pCx = 'Cx'                                         $ Boost capacitance [nRERL, Fig. 2a]
+.csparam pb = 'b'                                           $ boosting factor [nRERL, between eq. (2) and eq. (3)]
+.csparam pm = 'm'                                           $ Vdd/Vt [nRERL, between Fig. 5 axis]
+.csparam pVx = 'Vx'                                         $ Voltage of boost above Vdd [nRERL, between eq. (5)]
+
+.csparam pSc = '1.0/Vp'                                     $ scale factor so waveforms on plots are spaced vertically by 1
+
+.control
+.inc th.cir                                                 $ th.cir can be on a local disk while aa.cir ar.cir and q2.cir are on a network drive
+* pre_set strict_errorhandling
+unset ngdebug
+*save all @m.x30.x0.x0.m1[Id] @m.x0.m3[Id] @m.x0.m5[Id] @m.x0.m7[Id] @m.x0.m5[Id] @m.x0.m6[Id] @m.x0.m8[Id] @m.x0.m9[Id] @m.x0.m10[Id]
+
+let loop = 0
+let limit = $&pxn * abs($&pyn)
+while loop < limit
+
+let xval = (loop+$&pxn) % $&pxn                             $ break down the loop index into two components
+let yval = (loop-xval) / $&pxn;
+
+* first parameter for a two-dimensional sweep is always voltage
+if $&pxn > 1                                                $ use lower bound only unless there are two or more points
+let pxvar = (($&pxl * ($&pxn - 1 - xval)) + ($&pxh * xval))/($&pxn - 1)
+else
+let pxvar = $&pxl
+end
+*alterparam Vp = $&pxvar
+*alterparam o1 = $&pxvar
+alterparam xvar = $&pxvar
+
+if $&pyn > 0                                                $ when the number of points is positive, do a logarithmic time sweep
+
+* second parameter of a two-dimensional sweep is log frequency if the iteration count is positive and width/temperature if count is negative
+if $&pyn > 1                                                $ use lower bound only unless there are two or more points
+let Fq = ($&pyl*8e-6) * 10^(log (($&pyh*8e-6) / ($&pyl*8e-6)) / log (10) * yval / ($&pyn - 1))
+else
+let Fq = ($&pyl*8e-6)
+end
+let Fqq = 8e-6/Fq
+let Mzz = 1/Fqq                                             $ Mzz is clock period in megahertz
+alterparam Hz = $&Mzz
+alterparam yvar = $&Mzz
+let twv = $&Mzz
+
+else                                                        $ when the number of points is negative or zero, flip the sign and do a linear voltage sweep
+
+if abs($&pyn) > 1                                           $ second parameter for a two-dimensional sweep; user lower bound only unless there are two or more points
+let Fqq = (($&pyl * (abs($&pyn) - 1 - yval)) + ($&pyh * yval))/(abs($&pyn) - 1)
+else
+let Fqq = $&pyl
+end
+let Fq = 999
+*alterparam wX = $&Fqq                                       $ manage these by moving the asterisk
+*alterparam T = $&Fqq
+*alterparam h1 = $&Fqq
+alterparam yvar = $&Fqq
+let twv = $&Fqq
+
+end
+
+echo "---------------------------------Iteration $&loop ($&yval $&xval) $&pxvar V $&Fq MHz $&Fqq s"
+reset                                                       $ this command rescans input so the alterparms become effective
+
+run
+
+let tinit=$&pPer*1                                          $ this and the next line sets the dividing line between initialization and the measurement period
+let nmeas=pPds-1
+* delete next four lines at some point
+meas tran E_nRERL1us INTEG v(16) from=0 to=$&tinit          $ Reintegrate instantaneous power in total for 5 us, with result in a variable
+meas tran E_nRERLLev INTEG v(16) from=$&tinit to=$&pW       $ Reintegrate instantaneous power in total from 5 us to 400 us, with result in a variable
+echo -------------------nRERL $&E_nRERL1us , $&E_nRERLLev
+echo $&loop ckt , 1u , $&E_nRERL1us , energy , $&E_nRERLLev , Vp , $&pVp , Per , $&pPer , Cg , $&pCg , Cx , $&pCx , b , $&pb , m , $&pm , Vx , $&pVx , WS , $&pWS , WL , $&pWL>>Q2LALnRERL.csv
+
+meas tran E_Adiaini INTEG v(16) from=0 to=$&tinit           $ Reintegrate instantaneous power for initialization, with result in a variable
+meas tran E_AdiaRun INTEG v(16) from=$&tinit to=$&pW        $ Reintegrate instantaneous power minus initialization, with result in a variable
+let EncJ = max(E_AdiaRun/nmeas, 1.03e-17)                   $ the integral is for periods-1 cycles (avoid negatives and very small to protect log-scale plotting)
+let EncfJ = '$&EncJ*1e15'
+echo -------------------Adiabatic $&E_Adiaini , $&E_AdiaRun
+echo -----------------------------------------* Adia Ecycle $&EncJ J $&EncfJ fJ
+echo * $&loop Adia , $&pMD , $&E_Adiaini , $&EncJ , $&pVp , $&twv , $&pVp , $&tste , $&pCx , $&fstp , $&pWS , $&pwX , $&pGnT1 , $&pGnV1 , $&pGnT2 , $&pGnV2 ,
++ "x MD Eini Ecyc Vdd tw Vx tstep Cw temp WS wX o1 h1 o2 h2 legend">>"gp/Adia.csv"
+
+* white background
+set color0=white
+* black grid and text (only needed with X11, automatic with MS Win)
+set color1=black
+* wider grid and plot lines
+set xbrushwidth=1
+set xgridwidth=1
+
+set hcopypscolor=1
+set hcopyscale=4
+set hcopypstxcolor=2
+set hcopyfontsize=3
+set gnuplot_terminal=png
+
+if 1
+set fn=f$&loop+1+ndiss
+*plot                                                        $ plot instantaneous energy consumption
+gnuplot gp/$fn xlimit 0 $&pW ylimit -2e-5 2e-5
++ title "1. Dissipation. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(16) v(17)*1e7
+end
+
+if 0
+set fn=f$&loop+2+nleak
+*plot                                                        $ plot accumulated energy dissipation
+gnuplot gp/$fn xlimit 0 $&pW ylimit -1e-6 1e-6
++ title "2. Current check. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(18) v(19)*1e8
+end
+
+if 1
+set fn=f$&loop+3+nwav1
+gnuplot gp/$fn xlimit 0 $&pW ylimit 0 25
++ title "3. Waveforms, first rail. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(wv3_00)*$&pSc+23 v(wv3_01)*$&pSc+22 v(wv3_02)*$&pSc+21 v(wv3_03)*$&pSc+20
++ v(wv3_04)*$&pSc+19 v(wv3_05)*$&pSc+18 v(wv3_06)*$&pSc+17 v(wv3_07)*$&pSc+16
++ v(wv3_08)*$&pSc+15 v(wv3_09)*$&pSc+14 v(wv3_10)*$&pSc+13 v(wv3_11)*$&pSc+12
++ v(wv3_12)*$&pSc+11 v(wv3_13)*$&pSc+10 v(wv3_14)*$&pSc+9  v(wv3_15)*$&pSc+8
++ v(wv3_16)*$&pSc+7  v(wv3_17)*$&pSc+6  v(wv3_18)*$&pSc+5  v(wv3_19)*$&pSc+4
++ v(wv3_20)*$&pSc+3  v(wv3_21)*$&pSc+2  v(wv3_22)*$&pSc+1  v(wv3_23)*$&pSc+0
+end
+
+if 0
+set fn=f$&loop+4+nwav2
+gnuplot gp/$fn xlimit 7.5e-6 8.5e-6 ylimit 7 11 $ 0 $&pW ylimit 0 25
++ title "4. Waveforms, second rail. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(wv4_14)*$&pSc+9  v(wv4_15)*$&pSc+8
+*+ v(wv4_17)*$&pSc+8  v(wv4_21)*$&pSc+9
++ v(wv4_17)*$&pSc+9  v(wv4_21)*$&pSc+8
+end
+
+if 1
+set fn=f$&loop+4+nwav2
+gnuplot gp/$fn xlimit 0 $&pW ylimit 0 25
++ title "4. Waveforms, second rail. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(wv4_00)*$&pSc+23 v(wv4_01)*$&pSc+22 v(wv4_02)*$&pSc+21 v(wv4_03)*$&pSc+20
++ v(wv4_04)*$&pSc+19 v(wv4_05)*$&pSc+18 v(wv4_06)*$&pSc+17 v(wv4_07)*$&pSc+16
++ v(wv4_08)*$&pSc+15 v(wv4_09)*$&pSc+14 v(wv4_10)*$&pSc+13 v(wv4_11)*$&pSc+12
++ v(wv4_12)*$&pSc+11 v(wv4_13)*$&pSc+10 v(wv4_14)*$&pSc+9  v(wv4_15)*$&pSc+8
++ v(wv4_16)*$&pSc+7  v(wv4_17)*$&pSc+6  v(wv4_18)*$&pSc+5  v(wv4_19)*$&pSc+4
++ v(wv4_20)*$&pSc+3  v(wv4_21)*$&pSc+2  v(wv4_22)*$&pSc+1  v(wv4_23)*$&pSc+0
+end
+
+
+rusage time>>"gp/Adia.csv"
+rusage space solvetime trantime time
+
+let loop = loop + 1
+end
+
+.endc
+
+.END
+
+*** SETUP INSTRUCTIONS
+* The following files must be present in the working directory:
+* saa.cir (this file): The main file, yet containing a "test harness"; the user will run one of the main programs below and .include saa.cir at the end
+* sS2.cir: Static 2-Level Adiabatic Logic (S2LAL) shift register circuit, with .include saa.cir at the end
+* sQ2.cir: Quiet 2-Level Adiabatic Logic (Q2LAL) shift register circuit, with .include saa.cir at the end
+* snR.cir: nMOS Reversible Energy Recovery Logic (nRERL) shift register circuit, with .include saa.cir at the end
+
+* The following must be available:
+* The working directory must have gp subdirectory. The software deposits output files in the subdirectory to reduce clutter
+* An ngspice installation. This file was tested with version 36. A gnuplot installation allows more sophisticated plots [ngspice 36, section 18.7.1].
+* modelcard.nmos and modelcard.pmos: device models for BSIM4 from ngspice distribution (optional)
+* ps_nsoi1_uni.58.scs and ps_psoi1_uni.58.scs: device models for the undisclosed SOI transistor [undisclosed SOI] (optional)
+* Sky130 PDK, see notes below (optional)
+
+*** STRUCTURING
+* The a script file that contains
+*     (a) a parameter line
+*     (b) the three-stage shift register circuit under test
+*     (c) the line .include saa.cir.
+* The saa.cir file includes:
+*     (a) DC supply voltages GND and Vp on 70 and 71
+*     (b) 8-phase clocks on 110-117, responsive to parameters for frequency and fine control of waveform shape
+*     (c) a power measurement subsystem that creates plots 1 and 2
+*     (d) waveform plots 3 and 4, plotting signals wv3_nn and wv4_nn, nn = 00..23 generated by the circuit under test
+*     (e) an ability to perform parameter sweeps
+
+* nRERL is from a South Korean project in the 1999-2005 range [nRERL] [Complexity]. Q2LAL is "quiet 2LAL" derived from Static 2-Level Adiabatic Logic (S2LAL). More
+*     information at the end of the file.
+
+*** RAMP SHAPE
+* Linear ramps are ubiquitous in the literature, but ramps whose shape is flatter in the middle yield lower dissipation. Ramps are described in this software as having
+* unit width and height, so a linear ramp goes from (t=0, v=0) to (t=1, v=1). However, this software describes only the portion (t=0, v=0) to (t=.5, v=.5), fliping this
+* curve both horizontally and vertically to create the second half. The described portion is controlled by two points (o1, h1) and (o2, h2), o for offset, 0 <= o1 <= o2
+* <= .5 and h for height, where nominally 0 <= h <= 1, but h could extend futher. This defines a 5-segement ramp.
+
+* Notes:
+* Q2LAL is a significant conceptual modification to S2LAL, albeit one that differs only in one transistor.
+* Q2LAL transmits bits in straightforward dual-rail, which means a 1 is a pulse from 0 V to Vdd. Using S2LAL terminology, this is a "hat" pulse, meaning it has
+* the most positive voltage in the middle. A Q2LAL 0 is a "hat" pulse on a second wire. In contrast, S2LAL sends a 1 on two wires, a hat pulse like Q2LAL but also
+* an electrically inverted pulse on a different wire, i. e. a pulse from the idle Vdd state to 0 V. S2LAL sends a 0 by leaving both wires in the idle state.
+
+* For tutorial docs: no tabs; comments start column 61; 169 character maximum line length
+
+* Notation: A postive pulse A is designated in print with a circumflex (^) diacritical mark. It may be designated here as "A-hat" or "A^"; a negative pulse is
+* designated in print with a caron (v) diacritical mark. It may be designated here as "A-cup" or Av. In this notation, -A^ does not mean -(A^) = Av but rather (-A)^,
+* a positive-going pulse when A is 0
+
+*** REFERENCES
+* [ZF008] DeBenedictis, Erik. "Energy Management with Adiabatic Circuits." Technical report ZF008 (publication pending)
+* [ZF007] http://zettaflops.org/CATC/DPA-Q2LAL.pdf December 19, 2020 Document ZF007
+* [Q2LALv2.ppt] Slide deck DPA-Q2LALv2.ppt January 2, 2021 Document ZF007, a non-public PowerPoint on Erik's computer
+* [S2LAL] Frank, Michael P., et al. "Reversible Computing with Fast, Fully Static, Fully Adiabatic CMOS." arXiv preprint arXiv:2009.00448 (2020).
+* [Athas] Athas, W. C., et al. "Low-power digital systems based on adiabatic-switching principles." IEEE Transactions on VLSI Systems 2.4 (1994): 398-407
+* [nRERL] Lim, Joonho, et. al. "nMOS reversible energy recovery logic for ultra-low-energy applications." IEEE Journal of Solid-State Circuits 35.6 (2000): 865-875.
+* [Complexity] Kim, Seokkee, et. al. "Complexity reduction in an nRERL microprocessor." Proceedings of the 2005 international symposium on Low power electronics and
+*     design. 2005.

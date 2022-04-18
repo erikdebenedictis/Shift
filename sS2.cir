@@ -1,0 +1,177 @@
+  S2LAL top level script
+* [Under ngspice 36, { sS2, sQ2, snR, saa }.cir are an introduction to S2LAL, Q2LAL, and nRERL circuit.  Use files in vcs checked in h:mm PM d/mm/2022 (public)]
+
+* Copyright 2022 Zettaflops, LLC
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+
+*     http://www.apache.org/licenses/LICENSE-2.0
+
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+* The top-level control is to switch which of the next lines are commented.
+.param T=27 Div=100 mn=1 mp=2 o1=.09 h1=.30 o2=.36 h2=.45   $ defaults for control lines; override if needed, otherwise leave these alone
+.param o1=.20 h1=.34 o2=.40 h2=.465                         $ defaults for control lines; override if needed, otherwise leave these alone
+
+*.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
+.param MD=5 Vt=.5v  Vp=1.2v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.085     xn=3  xh=.095     yl=.37      yn=-3 yh=.39 $ 3.2616E-14 o1=.09 h1=.30 o2=.36 h2=.45
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=5 xh=.36      yl=.46      yn=-5 yh=.48 $ xxx9.34458E-15 , 1.7 o1=0.2 h1=0.34 o2=0.4 h2=0.465 Porch=.01 /100
+
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.36      yl=.465    yn=-1 yh=.48
+* 0 Adia , 5 , 2.73974E-13 , 9.24888E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 143.972 4/12/22 4:11 4130
+
+
+
+*** RUN 1 Builtin BSIM 3
+***param MD=3 J_S=1 Vp=9V       Hz=1e6      wX=1  ww=5u       ll=5u       Cw=.01p     Cb=5e-12    xl=9        xn=5  xh=5        yl=1e6      yn=1  yh=5e7
+***param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*param MD=3 Vt=2.5v Vp=5.0v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 3 , 2.86208E-12 , 7.08172E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 6.776 4/16/22 6:12 4130
+
+*** RUN 2 Speculative BSIM 4
+***param MD=4 J_S=0 Vp=.275V    Hz=1e6      wX=1  ww=600e-9   ll=20e-9    Cw=.01p     Cb=5e-14    xl=.275     xn=5  xh=.175     yl=1e6      yn=1  yh=25e6
+*param MD=4 Vt=.12v Vp=.28v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 4 , 4.65396E-14 , 3.8342E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 97.734 4/16/22 6:35 4130
+
+*** RUN 3 Sky130
+*param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 5 , 1.93086E-13 , 1.5614E-14 , 1.4 , 0.4675 , 1.4 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 144.666 4/12/22 8:16 4130
+*param MD=5 Vt=.75v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34     yl=.4625  yn=-1 yh=.4625
+* 0 Adia , 5 , 2.16538E-13 , 1.17752E-14 , 1.5 , 0.4625 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.4625 , 132.547 4/12/22 8:11 4130
+*param MD=5 Vt=.75v Vp=1.6v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34      yl=.465     yn=-1 yh=.465
+* 0 Adia , 5 , 2.43797E-13 , 1.00215E-14 , 1.6 , 0.465 , 1.6 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 152.958 4/12/22 8:20 4130
+*param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.36      yl=.465    yn=-1 yh=.48
+* 0 Adia , 5 , 2.73974E-13 , 9.24888E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 201.969 4/12/22 8:26 4130
+
+*** RUN 4 [undisclosed soi]
+***param MD=4 J_S=0 Vp=.275V    Hz=1e6      wX=1  ww=600e-9   ll=20e-9    Cw=.01p     Cb=5e-14    xl=.275     xn=5  xh=.175     yl=1e6      yn=1  yh=25e6
+*param MD=6 Vt=.12v Vp=.95v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+.param MD=6 Vt=.12v Vp=1.5v   Hz=1e6   T=-55    wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+****** 0 Adia , 6 , 3.99675E-13 , 3.93922E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 237.862 4/16/22 7:49 4130
+
+*.param MD=5 Vt=.75v Vp=3v     Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-16    Cx=5e-18    xl=3        xn=1  xh=1.2      yl=5e5      yn=3  yh=2e6
+
+* optimal shape o1=0.175 h1=0.3375                          $ Optimal wave shape; improves from 5.48709E-14 to 4.22656E-14 (factor of 1.2982) /20
+* optimal shape o1=0.175 h1=0.3375                          $ Optimal wave shape; improves from 5.55819E-14 to 4.23797E-14 (factor of 1.3115) /100
+.param xvar=.09 yvar=.36                                    $ optional dummy variables that will be modified by the looping code in saa.cir
+.param h1=xvar h2=yvar
+
+* The following equations are correct, but in the circuit Cg and Cx are in parallel with the simulated devices, which are not accounted for
+.param b='Cg/(Cg+Cx)'                                       $ [nRERL, between eq. (1) and eq. (2)]
+.param m='Vp/Vt'                                            $ [nRERL, between Fig. 5 axis]
+.param Vx='Vp*(1+b)-Vt'                                     $ [nRERL, between eq. (5)]
+.param ACAP=0.001e-15                                       $ capacitive load on the data line
+.param Cw=.01p 
+
+*** SUBCIRCUIT DEFINITIONS
+* [7-Frank 20] (Fig. 4), Athas's adiabatic amplifier but with complementary voltages on the two halves [4-Athas 94]
+.SUBCKT AAMP AT AC T C piT piC GND PWR nsub psub ini='gg'   $ [4-Athas 94] adiabatic amplifier. Args: AT/C T/C clockT/C substrate supplies
+.ic V(T)='ini' V(C)='vv-ini'                                $ .ic V(a)={gg} V(a2)=ini
+xM10 piT AT T nsub nFET n=1 m=1                             $ pass gate
+xM11 piT AC T psub pFET n=1 m=1
+xM12 piC AT C nsub nFET n=1 m=1                             $ pass gate
+xM13 piC AC C psub pFET n=1 m=1
+xM14 GND AC T nsub nFET n=1 m=1                             $ clamp
+xM15 PWR AT C psub pFET n=1 m=1
+.ENDS AAMP
+
+* [7-Frank 20] (Fig. 5)
+.SUBCKT LATCH AT AC QT QC piT piC pjT pjC GND PWR           $ One phase of the 2LAL shift register. Args: AT/C QT/C clock0T/C clock1T/C
++ nsub psub ini='gg'                                        $ substrate supplies
+X1 AT AC T C piT piC GND PWR nsub psub AAMP ini='ini'
+xM21 T pjT QT nsub nFET n=1 m=1                             $ Frank's latch
+xM22 T pjC QT psub pFET n=1 m=1
+xM23 C pjT QC nsub nFET n=1 m=1                             $ Frank's latch
+xM24 C pjC QC psub pFET n=1 m=1
+.ENDS LATCH
+
+* [7-Frank 20] (Fig. 6), except this is just the first stage; shift clocks for subsequent stages
+.SUBCKT PHASE S0T S0C S1T S1C                               $ One stage of the 2LAL shift register. Args: AT/C QT/C
++ p0T p0C p1T p1C p2T p2C p3T p3C GND PWR nsub psub         $ 4x{ phi<n>T/C } DC Supply substrate supplies
++ ini='gg'
+X0  S0T S0C S1T S1C p1T p1C p0T p0C GND PWR nsub psub LATCH ini=ini
+X10 S1T S1C S0T S0C p2T p2C p3T p3C GND PWR nsub psub LATCH ini=ini
+.if (MD!=2)
+C3 S1T GND Cw                                               $ NEWNEW wire capacitance on output only, presuming forward clocking
+C4 S1C GND Cw
+.endif
+.ends PHASE
+
+* [7-Frank 20] (Fig. 6), except this is all 8 stages
+.SUBCKT SDELAY S0T S0C S8T S8C                              $ Four phases that just delay. Args: 2*{ data<n>T/C }
++ p0T p1T p2T p3T p4T p5T p6T p7T                           $ clocks/power supplies
++ GND PWR nsub psub                                         $ DC Supply substrate supplies
++ ini='gg'
+X0  S0T S0C S1T S1C p0T p4T p1T p5T p2T p6T p3T p7T GND PWR nsub psub PHASE ini=gg
+X1  S1T S1C S2T S2C p1T p5T p2T p6T p3T p7T P4T p0T GND PWR nsub psub PHASE ini=ini
+X2  S2T S2C S3T S3C p2T p6T p3T p7T P4T p0T P5T p1T GND PWR nsub psub PHASE ini=ini
+X3  S3T S3C S4T S4C p3T p7T P4T p0T P5T p1T P6T p2T GND PWR nsub psub PHASE ini=ini
+X4  S4T S4C S5T S5C P4T p0T P5T p1T P6T p2T P7T p3T GND PWR nsub psub PHASE ini=ini
+X5  S5T S5C S6T S6C P5T p1T P6T p2T P7T p3T P0T p4T GND PWR nsub psub PHASE ini=ini
+X6  S6T S6C S7T S7C P6T p2T P7T p3T P0T p4T P1T p5T GND PWR nsub psub PHASE ini=gg
+X7  S7T S7C S8T S8C P7T p3T P0T p4T P1T p5T P2T p6T GND PWR nsub psub PHASE ini=gg
+.ENDS SDELAY
+
+*** TOP-LEVEL CIRCUIT
+
+X0  bsT inv SBT SBC 110 111 112 113 114 115 116 117 70 71 70 71 SDELAY ini=gg 
+X1  SBT SBC SCT SCC 110 111 112 113 114 115 116 117 70 71 70 71 SDELAY ini=vv
+X2  SCT SCC bsT inv 110 111 112 113 114 115 116 117 70 71 70 71 SDELAY ini=vv
+
+r1000 bsT wv3_00 0
+r1001 inv wv3_01 0
+r1002 SBT wv3_02 0
+r1003 SBC wv3_03 0
+r1010 SCT wv3_04 0
+r1011 SCC wv3_05 0
+r1012 bsT wv3_06 0
+r1013 bsT wv3_07 0
+r1020 bsT wv3_08 0
+r1021 bsT wv3_09 0
+r1022 bsT wv3_10 0
+r1023 bsT wv3_11 0
+r1030 bsT wv3_12 0
+r1031 bsT wv3_13 0
+r1032 bsT wv3_14 0
+r1033 bsT wv3_15 0
+r1040 bsT wv3_16 0
+r1041 bsT wv3_17 0
+r1042 bsT wv3_18 0
+r1043 bsT wv3_19 0
+r1050 bsT wv3_20 0
+r1051 bsT wv3_21 0
+r1052 bsT wv3_22 0
+r1053 bsT wv3_23 0
+
+r2000 bsT wv4_00 0
+r2001 inv wv4_01 0
+r2002 SBT wv4_02 0
+r2003 SBC wv4_03 0
+r2010 SCT wv4_04 0
+r2011 SCC wv4_05 0
+r2012 bsT wv4_06 0
+r2013 bsT wv4_07 0
+r2020 bsT wv4_08 0
+r2021 bsT wv4_09 0
+r2022 bsT wv4_10 0
+r2023 bsT wv4_11 0
+r2030 bsT wv4_12 0
+r2031 bsT wv4_13 0
+r2032 bsT wv4_14 0
+r2033 bsT wv4_15 0
+r2040 110 wv4_16 0
+r2041 111 wv4_17 0
+r2042 112 wv4_18 0
+r2043 113 wv4_19 0
+r2050 114 wv4_20 0
+r2051 115 wv4_21 0
+r2052 116 wv4_22 0
+r2053 117 wv4_23 0
+
+.inc saa.cir

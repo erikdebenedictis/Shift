@@ -1,0 +1,4 @@
+set num_threads=4
+set dir="c:/Shift"
+set myname="4130.csv"
+*let pid=n_4130
