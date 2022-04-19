@@ -139,6 +139,10 @@ Vdat0 124 70 DC 'ng' PWL('0'   'ng' 't0' 'ng' 'u0' 'n2' 'x0' 'ns' 'y0' 'ns'
 +                                   't3' 'nq' 'u3' 'nq' 'x3' 'ns' 'y3' 'ns'
 +                                   't4' 'ns' 'u4' 'ns' 'x4' 'n2' 'y4' 'ng' 't9' 'ng' r='0')
 VbootP  123 70 DC 'nv' PWL('0' 'nv' 't9-1e-10' 'nv' 't9' 'ng' '3*t9-1e-10' 'ng' '3*t9' 'ng' '4*t9' 'ng' r='3*t9')
+VTOGL  120 0 DC 'gg-1.2' PWL('0' 'gg-1.2'
++ '3*t9+t6' 'gg-1.2' '3*t9+t6+Rx' 'v2' '3*t9+t6+Ry' 'v3' '3*t9+t6+Rp' 'vv+1.2'
++ '7*t9+t6' 'vv+1.2' '7*t9+t6+Rx' 'v3' '7*t9+t6+Ry' 'v2' '7*t9+t6+Rp' 'gg-1.2' '8*t9' 'gg-1.2' r='0')
+VPRM   121 0 DC 'vv/2' SIN('vv/2' 'vv/4' '1.5/Ramp' 0 0 0)
 
 * power and energy calculation
 B0 70 16 V=0                                                $ compute power delivered to circuit
@@ -206,6 +210,7 @@ A3 22 23 power_tally                                        $ 23 is cumulative e
 .csparam pVx = 'Vx'                                         $ Voltage of boost above Vdd [nRERL, between eq. (5)]
 
 .csparam pSc = '1.0/Vp'                                     $ scale factor so waveforms on plots are spaced vertically by 1
+.csparam pSs = '0.3/Vp'
 
 .control
 .inc th.cir                                                 $ th.cir can be on a local disk while aa.cir ar.cir and q2.cir are on a network drive
@@ -334,9 +339,9 @@ gnuplot gp/$fn xlimit 7.5e-6 8.5e-6 ylimit 7 11 $ 0 $&pW ylimit 0 25
 end
 
 if 1
-set fn=f$&loop+4+nwav2
+set fn=f$&loop+5+nwav2
 gnuplot gp/$fn xlimit 0 $&pW ylimit 0 25
-+ title "4. Waveforms, second rail. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ title "5. Waveforms, second rail. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
 + v(wv4_00)*$&pSc+23 v(wv4_01)*$&pSc+22 v(wv4_02)*$&pSc+21 v(wv4_03)*$&pSc+20
 + v(wv4_04)*$&pSc+19 v(wv4_05)*$&pSc+18 v(wv4_06)*$&pSc+17 v(wv4_07)*$&pSc+16
 + v(wv4_08)*$&pSc+15 v(wv4_09)*$&pSc+14 v(wv4_10)*$&pSc+13 v(wv4_11)*$&pSc+12
@@ -345,6 +350,16 @@ gnuplot gp/$fn xlimit 0 $&pW ylimit 0 25
 + v(wv4_20)*$&pSc+3  v(wv4_21)*$&pSc+2  v(wv4_22)*$&pSc+1  v(wv4_23)*$&pSc+0
 end
 
+if 1
+set fn=f$&loop+6+nnote
+gnuplot gp/$fn xlimit 0 $&pW ylimit 0 7
++ title "6. Note Note slide. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
++ v(wv3_07)*$&pSs+1.2*$&pSs+6
++ v(wv3_08)*$&pSs+5.1   v(wv3_09)*$&pSs+5.05  v(wv3_10)*$&pSs+5     v(wv3_11)*$&pSs+4.50
++ v(wv3_12)*$&pSs+4.25  v(wv3_13)*$&pSs+4.05  v(wv3_14)*$&pSs+4     v(wv3_15)*$&pSs+3.75
++ v(wv3_16)*$&pSs+3.55  v(wv3_17)*$&pSs+3.50  v(wv3_18)*$&pSs+3.25  v(wv3_19)*$&pSs+3.05
++ v(wv3_20)*$&pSs+3.00  v(wv3_21)*$&pSc+2     v(wv3_22)*$&pSc+1     v(wv3_23)*$&pSc+0
+end
 
 rusage time>>"gp/Adia.csv"
 rusage space solvetime trantime time

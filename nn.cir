@@ -1,0 +1,427 @@
+  Q2LAL top level script
+* [Under ngspice 36, { sS2, sQ2, snR, saa }.cir are an introduction to S2LAL, Q2LAL, and nRERL circuit.  Use files in vcs checked in h:mm PM d/mm/2022 (public)]
+
+* Copyright 2022 Zettaflops, LLC
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+
+*     http://www.apache.org/licenses/LICENSE-2.0
+
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+* The top-level control is to switch which of the next lines are commented.
+.param T=27 Div=100 mn=1 mp=2 pW=2 Wd=4                     $ defaults for control lines; override if needed, otherwise leave these alone
+.param o1=.20 h1=.34 o2=.40 h2=.465                         $ defaults for control lines; override if needed, otherwise leave these alone
+
+*.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
+.param MD=5 Vt=.75v Vp=1.2v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.1       xn=1  xh=.105     yl=.37      yn=-1 yh=.38 $ 2.72921E-14 o1=.1 h1=.29 o2=.37 h2=.46 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.2v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.2       xn=9  xh=2.0     yl=.37      yn=-1 yh=.38 $ 1.0616E-14 Vp=1.6 o1=.1 h1=.29 o2=.37 h2=.46 Porch=.01 /20
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.165      xn=1 xh=.165     yl=.41      yn=-1 yh=.41 $ 1.28828E-14 Vp=1.4 o1=0.1 h1=.165 o2=0.3 h2=0.41 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675 $ 1.29906E-14 Vp=1.4 o1=0.2 h1=0.35 o2=0.40 h2=0.4675 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675 $ 1.29906E-14 Vp=1.4 o1=0.2 h1=0.35 o2=0.40 h2=0.4675 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.6v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34      yl=.465     yn=-1 yh=.465 $ 9.45632E-15 Vp=1.6 o1=0.2 h1=0.34 o2=0.4 h2=0.465 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=5 xh=.36      yl=.46      yn=-5 yh=.48 $ 9.34458E-15 , 1.7 o1=0.2 h1=0.34 o2=0.4 h2=0.465 Porch=.01 /100
+
+*** RUN 1 Builtin BSIM 3
+***param MD=3 J_S=1 Vp=9V       Hz=1e6      wX=1  ww=5u       ll=5u       Cw=.01p     Cb=5e-12    xl=9        xn=5  xh=5        yl=1e6      yn=1  yh=5e7
+***param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*.param MD=3 Vt=2.5v Vp=5.0v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 3 , 8.33834E-13 , 5.41552E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 105.894 4/16/22 6:07 4130
+* 0 Adia , 3 , 1.99904E-12 , 6.27097E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 76.093 4/18/22 6:30 4130
+
+*** RUN 2 Speculative BSIM 4
+***param MD=4 J_S=0 Vp=.275V    Hz=1e6      wX=1  ww=600e-9   ll=20e-9    Cw=.01p     Cb=5e-14    xl=.275     xn=5  xh=.175     yl=1e6      yn=1  yh=25e6
+*param MD=4 Vt=.12v Vp=.28v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 4 , 3.65796E-14 , 3.86714E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 164.278 4/16/22 6:01 4130
+* 0 Adia , 4 , 1.15347E-13 , 4.47025E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 166.608
+
+*** RUN 3 Sky130 (this control line enabled by default)
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.7       xn=1 xh=1.7      yl=.465     yn=-1 yh=.465
+* 0 Adia , 5 , 2.79583E-14 , 1.29906E-14 , 1.4 , 0.4675 , 1.4 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 158.317 4/12/22 4:23 4130
+*param MD=5 Vt=.75v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34     yl=.4625  yn=-1 yh=.4625
+* 3 Adia , 5 , 2.79895E-14 , 1.03621E-14 , 1.5 , 0.4625 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.4625 , 185.288 4/12/22 7:06 4130
+*param MD=5 Vt=.75v Vp=1.6v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34      yl=.465     yn=-1 yh=.465
+* 0 Adia , 5 , 2.96714E-14 , 9.45632E-15 , 1.6 , 0.465 , 1.6 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.642 4/12/22 4:18 4130
+*param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.36      yl=.465    yn=-1 yh=.48
+* 0 Adia , 5 , 3.23181E-14 , 9.34458E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.88 4/12/22 3:58 4130
+* 0 Adia , 5 , 5.74007E-14 , 9.83645E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 158.037 4/18/22 6:23 4130
+
+*** RUN 4 [undisclosed soi]
+*param MD=6 Vt=.12v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 6 , 1.57512E-13 , 3.94595E-14 , 1.5 , 0.4675 , 1.5 , 1.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 187.226 4/16/22 8:05 4130
+* 0 Adia , 6 , 3.99675E-13 , 3.93922E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 237.862 4/16/22 7:49 4130
+* 0 Adia , 6 , 4.87778E-13 , 4.44046E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 225.348 4/18/22 5:45 4130
+*.param MD=5 Vt=.75v Vp=3v     Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-16    Cx=5e-18    xl=3        xn=1  xh=1.2      yl=5e5      yn=3  yh=2e6
+
+* Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.22185E-14 to 3.18945E-14 (factor of 1.3237) /20
+* Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.19894E-14 to 3.21366E-14 (factor of 1.3066) /100
+.param xvar=.38 yvar=.46                                    $ optional dummy variables that will be modified by the looping code in saa.cir
+*.param h1=xvar h2=yvar
+*.param Vp=xvar
+
+* The following equations are correct, but in the circuit Cg and Cx are in parallel with the simulated devices, which are not accounted for
+.param b='Cg/(Cg+Cx)'                                       $ [nRERL, between eq. (1) and eq. (2)]
+.param m='Vp/Vt'                                            $ [nRERL, between Fig. 5 axis]
+.param Vx='Vp*(1+b)-Vt'                                     $ [nRERL, between eq. (5)]
+.param ACAP=0.001e-15                                       $ capacitive load on the data line
+.param Cw=.01p 
+
+* The following parameter causes extra buffering on data-controlled clocks. In the simplest circuit, a single adiabatic amplifier [4-Athas 94] is used for both the
+* clock and the data-enable bit in the clock shift register. However, the data-enable bit can be corrupted when the clock is overloaded or shorted. This would cause
+* fault propagation up the hierarchy and make recovery or diagnostics difficult. Setting XBuf to nonzero causes the netlist to generate two adiabatic amplifiers,
+* limiting the impact of this type of fault to excessive current draw (the controlled circuit will not work either).
+.param XBuf=0                                               $ extra buffer for data-controlled clocks, disabled in compatibility MD=2 (and always)
+
+* The following width-multiplying parameter increases the drive capability of a data-controlled clock. Set to 1 to disable this feature.
+.param ClkW=1                                               $ width multiplier for the data controlled clock drivers, except 1 in compatibility MD=2 (and always)
+
+* Due to an error, the original code has one register of length 2 instead of 3. Set following parameter to nonzero for the long register.
+.param LReg=1                                               $ set to zero always
+
+*** SUBCIRCUIT DEFINITIONS
+*** SUBCIRCUIT DEFINITIONS
+* Erik's "two hat" adiabatic amplifier. In S2LAL notation, it expects data input as A^ and -A^. Given this, it produces the correct output [main, Fig. 15].
+* Same role in framework as [7-Frank 20, Fig. 4], Athas's adiabatic amplifier but with complementary voltages on the two halves [4-Athas 94].
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: A(i-1)^   2: -A(i-1)^  3: Q(i)^     4: buf Q(i)^ 5: Q(i)v     6:phi(i)^    7: Clmp(i-1)v8: GND       9: nsub     10: psub
+* PW parameter is the width of the drivers on the TRUE only side
+* Depending on the LReg parameter, argument 4 is either ignored or a buffered Q(i)^ of width XBuf
+.SUBCKT QAAmp AT AC T T2 C pT Cl GND nsub psub ini='gg' PW=1.002	$ Erik's adiabatic amplifier. Args: AT/C T/C clock&clamp substrate supplies
+.ic V(T)='ini' V(C)='vv-ini'                                $ .ic V(a)={gg} V(a2)=ini
+xM0 pT AT T nsub nFET n=1 m=PW                              $ pass gate
+xM1 pT AC T psub pFET n=1 m=PW
+xM2 pT AC C nsub nFET n=1 m=1                               $ pass gate
+xM3 pT AT C psub pFET n=1 m=1
+xM4 GND AC T nsub nFET n=1 m=1                              $ clamp
+xM5 GND AT C nsub nFET n=1 m=1
+xM6 GND Cl T nsub nFET n=1 m=1                              $ clamp
+.if (LReg=0)
+xM7 GND Cl C nsub nFET n=1 m=1
+.endif
+.if (XBuf=0)
+.else
+xM8 pT AT T2 nsub nFET n=1 m='ClkW*PW'                      $ pass gate
+xM9 pT AC T2 psub pFET n=1 m='ClkW*PW'
+xM10 GND AC T2 nsub nFET n=1 m='ClkW'                       $ clamp
+xM11 GND Cl T2 nsub nFET n=1 m='ClkW'                       $ clamp
+.endif
+.ENDS QAAmp
+
+* This is the latched version; it is just a QAAmp followed by a pass gate.
+* Erik's "two hat" adiabatic amplifier plus pass gate. In S2LAL notation, it expects data input as A^ and -A^. Given this, it produces the correct output
+* per [main, Fig. 15] followed by two pass gates.
+* Same role in framework as [7-Frank 20, Fig. 5 left].
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: A(i-1)^   2: -A(i-1)^  3: C(i)^     4: -C(i)^    5: phi(i)^   6: Clmp(i-1)v7: phi(j)^   8: phi(j)v
+* 9: GND      10: PWR      11: nsub     12: psub     13: Q(i)^    14: -Q(i)^   15: tap      16: tap
+* PW parameter is the width of the AAmp driver and pass transistors on the TRUE side only
+.SUBCKT qLatch AT AC QT QC piT Cli pjT pjC GND PWR          $ One phase of the 2LAL shift register. Args: AT/C QT/C clockiT&clamp clockjT/C
++ nsub psub tap_T tap_C tap_piT tap_Cli ini='gg' PW=1.004   $ substrate supplies
+.if (XBuf=0)
+r0 tap_T T 1                                                $ green
+.else
+r0 tap_T T2 1                                               $ green
+.endif
+r1 tap_C C 1                                                $ red
+r2 tap_piT piT 1e9                                          $ blue
+r3 tap_Cli Cli 1e9                                          $ yellow
+X1 AT AC T T2 C piT Cli GND nsub psub QAAmp ini='ini' PW=PW
+xM1 T pjT QT nsub nFET n=1 m=PW                             $ Frank's latch
+xM2 T pjC QT psub pFET n=1 m=PW
+xM3 C pjT QC nsub nFET n=1 m=1                              $ Frank's latch
+xM4 C pjC QC psub pFET n=1 m=1
+.if (MD=2)                                                  $ for compatibility with past simulations, Cw must be here and have value 1e-17
+C1 AT 0 Cw
+C2 AC 0 Cw
+C3 T 0 Cw
+C4 C 0 Cw
+.endif
+.if (MD=6)                                                  $ address YOU TURKEY! (poorly)
+C1 AT 0 'Cw/2'
+C2 AC 0 'Cw/2'
+C3 T 0 'Cw/2'
+C4 C 0 'Cw/2'
+.endif
+.ENDS qLatch
+
+* One phase of a Q2LAL shift register [main, Fig. 14b].
+* Same role in framework as one loop of [7-Frank 20, Fig. 6].
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: S0        2: -S0       3: S1        4: -S1
+* 5: phi(0)    6: -phi(0)   7: phi(1)    8: -phi(1)   9: phi(2)   10: -phi(2)  11: phi(3)   12: -phi(3)
+*13: GND      14: PWR      15: nsub     16: psub     17: Q(i)^    18: -Q(i)^   19: q(i)^    20: -q(i)^
+*21: tap      22: tap      23: tap      24: tap
+* QW is the width of the pass transistors, TRUE side only, forward direction, see [main, Fig. 16a] circle-1
+* RW is the width of the pass transistors, TRUE side only, reverse direction, see [main, Fig. 15a] circle-2
+.SUBCKT qPhase S0T S0C S1T S1C                              $ One stage of the 2LAL shift register. Args: AT/C QT/C
++ p0T p0C p1T Cl1 p2T Cl2 p3T p3C GND PWR nsub psub         $ two clocks T/C and two clocks T&clamp DC Supply substrate supplies
++ tap0 ini='gg' QW=1.0066 RW=1.006
+r0 tap0 tap_T1 1
+r1 unused1 tap_C1 1
+r2 unused2 tap_T2 1
+r3 unused3 tap_C2 1
+X0  S0T S0C S1T S1C p1T Cl1 p0T p0C GND PWR nsub psub tap_T1 tap_C1 tap_piT1 tap_Cli1 qLatch ini=ini PW=QW
+X10 S1T S1C S0T S0C p2T Cl2 p3T p3C GND PWR nsub psub tap_T2 tap_C2 tap_piT2 tap_Cli2 qLatch ini=ini PW=RW
+.if (MD!=2 && MD!=6)
+C3 S1T GND Cw                                               $ NEWNEW wire capacitance on output only, presuming forward clocking
+C4 S1C GND Cw
+*.if (MD==6)                                                 $ Required to avoid YOU TURKEY! message ngspice crash
+*C5 S1T GND Cw
+*C6 S1C GND Cw
+*.endif
+.endif
+.ends qPhase
+
+* 8 phases of a Q2LAL shift register [main, Fig 16a], plus 2 additional phases for creating reversible busses
+* This circuit has the same role as one loop of [7-Frank 20, Fig. 6 when viewed as a Q2LAL shift register
+* However, this circuit includes a variant of P7T (and its electrical inverse P3T) that can put the first internal electrical signal into a floating state for busses
+* This feature is described in [main, Fig. 16d], but it can be disabled by the calling circuit by connecting pX to the same signal as P7T and likewise for pY and P3T
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: S0        2: -S0       3: S8        4: -S8
+* 5: phi(0)    6: phi(1)    7: phi(2)    8: phi(3)    9: phi(4)   10: phi(5)   11: phi(6)   12: phi(7)
+*13: pX       14: pY
+*15: Clmp(0)v 16: Clmp(1)v 17: Clmp(2)v 18: Clmp(3)v 19: Clmp(4)v 20: Clmp(5)v 21: Clmp(6)v 22: Clmp(7)
+*23: tap      24: tap
+*25: GND      26: PWR      27: nsub     28: psub
+* PW parameter is the width of the pass transistors on the bus interface, TRUE side only
+.SUBCKT qDelay SiT SiC S7T S7C                              $ Four phases that just delay. Args: 2*{ data<n>T/C }
++ p0T p1T p2T p3T p4T p5T p6T p7T pX pY                     $ clock-power supplies w/bus control; for no bus control connect to p7T and p3T
++ Cl0 Cl1 Cl2 Cl3 Cl4 Cl5 Cl6 Cl7                           $ clamps
++ tap8 tap9                                                 $ debugging taps and initialization
++ GND PWR nsub psub ini='gg' PW=1.01                        $ DC Supply substrate supplies
+R8 tap8 S0T 1
+R9 tap9 S0C 1
+RA tapA t120 1
+RB tapB t130 1
+RC tapC t140 1
+RD tapD t150 1
+RE tapE t160 1
+RF tapF t170 1
+X0  S0T S0C S1T S1C p0T p4T p1T Cl0 p2T Cl1 P3T P7T GND PWR nsub psub t100 qPhase ini=gg QW=1 RW=PW
+X1  S1T S1C S2T S2C p1T p5T p2T Cl1 p3T Cl2 P4T p0T GND PWR nsub psub t110 qPhase ini=ini QW=1 RW=1
+X2  S2T S2C S3T S3C p2T p6T p3T Cl2 P4T Cl3 P5T p1T GND PWR nsub psub t120 qPhase ini=ini QW=1 RW=1
+X3  S3T S3C S4T S4C p3T p7T P4T Cl3 P5T Cl4 P6T p2T GND PWR nsub psub t130 qPhase ini=ini QW=1 RW=1
+X4  S4T S4C S5T S5C P4T p0T P5T Cl4 P6T Cl5 P7T p3T GND PWR nsub psub t140 qPhase ini=ini QW=1 RW=1
+X5  S5T S5C S6T S6C P5T p1T P6T Cl5 P7T Cl6 P0T p4T GND PWR nsub psub t150 qPhase ini=ini QW=1 RW=1
+X6  S6T S6C S7T S7C P6T p2T P7T Cl6 P0T Cl7 P1T p5T GND PWR nsub psub t160 qPhase ini=gg QW=1 RW=1
+X7  SiT SiC S0T S0C pX  pY  P0T Cl7 P1T Cl0 P2T p6T GND PWR nsub psub t170 qPhase ini=gg QW=PW RW=1
+.ENDS qDelay
+
+* Clamp waveform [main, Fig. 15b]. Operates in two modes:
+* Production, where the wave is generated from four clocks [main, Fig. 15b].
+* Testing, where the function is created from a hardcoded ngspice clock. This clock is included in the power computation.
+* Choose by switch the condition between .if (1) and .if (0)
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: Phi(i+4)^ 2: Phi(i-2)^ 3: Phi(i-1)^ 4: Phi(i-1)v 5: Test      6: Clmp(i)v
+.SUBCKT Clp Pip4 Pim2 Pm1hat Pm1cup Clmp                    $ Phi(i+4) Phi(i-2) Phi(i-1)hat Phi(i-1)cup Clamp(i)
++ nsub psub                                                 $ Substrate supplies
+xM0 Pip4  Pm1hat Clmp nsub nFET n=1 m=1                     $ pass gate
+xM1 Pip4  Pm1cup Clmp psub pFET n=1 m=1
+xM2 Pim2 Pm1cup Clmp nsub nFET n=1 m=1                      $ pass gate
+xM3 Pim2 Pm1hat Clmp psub pFET n=1 m=1
+.ENDS Clp
+
+* Special circuit waveform [main, Fig. 16c].
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: Phi(i-1)v 2: Phi(i+1)v 3: Phi(i+2)^ 4: Phi(i+2)v 5: A(i-5)^   6: -A(i-5)^  7: Phi(i)^   8: J(i)^
+.SUBCKT Spec Pip4 Pim2 Pm1cup Pm1hat AT AC Picup J          $ Phi(i+4) Phi(i-2) Phi(i-1)hat Phi(i-1)cup Clamp(i)
++ VDD nsub psub                                             $ Substrate supplies
+xM0 Pip4 Pm1cup c nsub nFET n=1 m='ClkW'                    $ pass gate
+xM1 Pip4 Pm1hat c psub pFET n=1 m='ClkW'
+xM2 Pim2 Pm1hat c nsub nFET n=1 m='ClkW'                    $ pass gate
+xM3 Pim2 Pm1cup c psub pFET n=1 m='ClkW'
+xM4 VDD c J psub pFET n=1 m='ClkW'                          $ c is c(i+3)hat
+xM5 VDD AT J psub pFET n=1 m='ClkW'
+xM6 Picup AT J nsub nFET n=1 m='ClkW'
+xM7 Picup AC J psub pFET n=1 m='ClkW'
+.ENDS Spec
+
+* Data controlled clock per [main, Fig. 16d]
+*
+* To think about this circuit without bus support, simply ignore connections Jx and Jy, in which case the behavior is
+* (a) a Q2LAL shift register, similar to [7-Frank 20, Fig. 6], but 8 stages of Q2LAL (instead of 3 stages of S2LAL as in the figure), and
+* (b) when this circuit is given a "1" bit as input, it produces an output clock J0..J7. Otherwise J0..J7 stop (including some signals being clamped to V)
+*
+* Bus support adds two additional output clocks Jx and Jy. If these signals replace J7 and its electrical inverse in a particular part of the driven circuit,
+* a pair of T/C nodes in the driven circuit will go into a high-impedance state when the clock is off.
+* PW is the width of the pass transistors that drive output clocks phases J0, J2, J4, J6, see [main, Fig. 16]
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: S0        2: -S0       3: S8        4: -S8
+* 5: phi(0)    6: phi(1)   7: phi(2)     8: phi(3)    9: phi(4)   10: phi(5)   11: phi(6)   12: phi(7)
+*13: Clmp(0)v 14: Clmp(1)v 15: Clmp(2)v 16: Clmp(3)v 17: Clmp(4)v 18: Clmp(5)v 19: Clmp(6)v 20: Clmp(7)v
+*21: J0 = -J4 22: J1 = -J5 23: J2 = -J6 24: J3 = -J7 25: J4       26: J5       27: J6       28: J7       29: Jx       30: Jy
+*31: GND      32: PWR      33: nsub     34: psub
+.SUBCKT qDataClock SiT SiC S7T S7C                          $ Four phases that just delay. Args: 2*{ data<n>T/C }
++ p0T p1T p2T p3T p4T p5T p6T p7T                           $ clocks/power supplies
++ Jx Jy                                                     $ two bus clocks
++ Cl0 Cl1 Cl2 Cl3 Cl4 Cl5 Cl6 Cl7                           $ clamps
++ J0 J1 J2 J3 J4 J5 J6 J7                                   $ Generated clocks. These are the "hat" clocks; J(n)v = J(n + 4 mod 8)^
++ GND PWR nsub psub ini='gg' PW=1.008                       $ DC Supply substrate supplies
+.if (MD=2)                                                  $ This seemingly innocuous transistor is needed to duplicate past results at the level of round off error
+xM0 S0T S0T S0T nsub nFET n=1 m=1
+.endif
+X0  S0T S0C S1T S1C p0T p4T p1T Cl0 p2T Cl1 p3T p7T GND PWR nsub psub J0   qPhase ini=gg QW=PW RW=1
+X1  S1T S1C S2T S2C p1T p5T p2T Cl1 p3T Cl2 P4T p0T GND PWR nsub psub J1   qPhase ini=ini QW=1 RW=1
+X2  S2T S2C S3T S3C p2T p6T p3T Cl2 P4T Cl3 P5T p1T GND PWR nsub psub J2   qPhase ini=ini QW=PW RW=1
+X3  S3T S3C S4T S4C p3T p7T P4T Cl3 P5T Cl4 P6T p2T GND PWR nsub psub J3   qPhase ini=ini QW=1 RW=1
+X4  S4T S4C S5T S5C P4T p0T P5T Cl4 P6T Cl5 P7T p3T GND PWR nsub psub t140 qPhase ini=ini QW=1 RW=1
+X5  S5T S5C S6T S6C P5T p1T P6T Cl5 P7T Cl6 P0T p4T GND PWR nsub psub t150 qPhase ini=ini QW=1 RW=1
+X6  S6T S6C S7T S7C P6T p2T P7T Cl6 P0T Cl7 P1T p5T GND PWR nsub psub t160 qPhase ini=gg QW=1 RW=1
+X7  SiT SiC S0T S0C P7T p3T P0T Cl7 P1T Cl0 P2T p6T GND PWR nsub psub Jx   qPhase ini=gg QW=1 RW=1
+* Selectively turn on/off the data-controlled clock. Connect clocks to PWR when off to avoid an error when trying to plot a disconnected node.
+X12 p7T p1T p6T p2T SiT SiC p4T Jy PWR nsub psub Spec
+X8  p0T p2T p7T p3T S0T S0C p5T J4 PWR nsub psub Spec
+X9  p1T p3T p0T p4T S1T S1C p6T J5 PWR nsub psub Spec
+X10 p2T p4T p1T p5T S2T S2C p7T J6 PWR nsub psub Spec
+X11 p3T p5T p2T p6T S3T S3C p0T J7 PWR nsub psub Spec
+.ENDS qDataClock
+
+.SUBCKT crosst A1 A2 B1 B2 C1 C2 D1 D2 Ctl GND nsub psub    $ flowchart decision element, single-ended control crossover requiring higher voltages
+xM1 A1 Ctl C1 nsub nFET n=1 m=5
+xM2 A2 Ctl C2 nsub nFET n=1 m=5
+xM3 B1 Ctl D1 nsub nFET n=1 m=5
+xM4 B2 Ctl D2 nsub nFET n=1 m=5
+xM5 A1 Ctl D1 psub pFET n=1 m=5
+xM6 A2 Ctl D2 psub pFET n=1 m=5
+xM7 B1 Ctl C1 psub pFET n=1 m=5
+xM8 B2 Ctl C2 psub pFET n=1 m=5
+.ends
+
+*** TOP-LEVEL CIRCUIT
+
+* A three-bit cyclic shift register with inversion each cycle
+*X0  bsT inv SBT SBC 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 pp8 pp9 70 71 70 71 qDelay ini=gg PW=1
+*X1  SBT SBC SCT SCC 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 uu8 xq9 70 71 70 71 qDelay ini=gg PW=1
+*X2  SCT SCC inv bsT 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 vv8 vv9 70 71 70 71 qDelay ini=gg PW=1
+
+* The following circuit is an improved quantum computer controller. It is a flowchart with three boxes A, B, and C. Based on a simulated v'(t) [main], the execution
+* pattern is A B A C A B... The "music" is A = note note, B = rest note, and C = note rest. The circuitry (in aa.cir) includes generation of a prime line comprising a
+* sine wave of frequncy 1.5/Ramp. The prime line is gated by a single 1x1 size nFET whose output is loaded by a 10 Meg resistance connected to Vdd/2.
+
+* Common A stage, note note
+X10  SAT SAC SBT SBC 110 111 112 113 114 115 116 117 pX  pY  710 711 712 713 714 715 716 717 pp8 pp9 ppA ppB ppC ppD ppE ppF 70 71 70 71 qDataClock ini=vv PW=Wd
+X11  SBT SBC SCS SCB 110 111 112 113 114 115 116 117 117 113 710 711 712 713 714 715 716 717 xx8 xx9 70 71 70 71 qDelay ini=vv PW=1
+
+X12 SCS SCB yy1 yy2 SET SEC SCT SCC 120 0 70 71 crosst      $ flowchart decision element
+
+* B stage, executes on alternate passes
+X13  SCT SCC SDT SDC 110 111 112 113 114 115 116 117 uX  uY  710 711 712 713 714 715 716 717 uu8 uu9 uuA uuB uuC uuD uuE uuF 70 71 70 71 qDataClock ini=gg PW=Wd
+X14  SDT SDC SES SEB 110 111 112 113 114 115 116 117 117 113 710 711 712 713 714 715 716 717 xq8 xq9 70 71 70 71 qDelay ini=gg PW=1
+
+* C stage, executes on alternate passes
+X15  SET SEC SFT SFC 110 111 112 113 114 115 116 117 wX  wY  710 711 712 713 714 715 716 717 ww8 ww9 wwA wwB wwC wwD wwE wwF 70 71 70 71 qDataClock ini=gg PW=Wd
+X16  SFT SFC SAS SAB 110 111 112 113 114 115 116 117 117 113 710 711 712 713 714 715 716 717 xr8 xr9 70 71 70 71 qDelay ini=gg PW=1
+
+X17  SAS SAB SES SEB SAT SAC yy1 yy2 120 0 70 71 crosst      $ flowchart decision element
+
+* shift registers storing sheet music, with output driving a bus
+X20 SXT SXC SYT SYC pp8 pp9 ppA ppB ppC ppD ppE ppF pX  pY  730 731 732 733 734 735 736 737 bsT bsC 70 71 70 71 qDelay ini=vv PW=Wd
+X21 SYT SYC SXT SXC pp8 pp9 ppA ppB ppC ppD ppE ppF ppF ppB 730 731 732 733 734 735 736 737 nn0 nn1 70 71 70 71 qDelay ini=vv PW=1
+
+X22 SPT SPC SQT SQC uu8 uu9 uuA uuB uuC uuD uuE uuF uX  uY  750 751 752 753 754 755 756 757 bsT bsC 70 71 70 71 qDelay ini=gg PW=Wd
+X23 SQT SQC SPT SPC uu8 uu9 uuA uuB uuC uuD uuE uuF uuF uuB 750 751 752 753 754 755 756 757 zq8 zq9 70 71 70 71 qDelay ini=vv PW=1
+
+X24 SRT SRC SST SSC ww8 ww9 wwA wwB wwC wwD wwE wwF wX  wY  760 761 762 763 764 765 766 767 bsT bsC 70 71 70 71 qDelay ini=vv PW=Wd
+X25 SST SSC SRT SRC ww8 ww9 wwA wwB wwC wwD wwE wwF wwF wwB 760 761 762 763 764 765 766 767 zx8 zx9 70 71 70 71 qDelay ini=gg PW=1
+
+xM0 121 BsT 122 nsub nFET n=1 m=1
+r3000 122 70 2e7
+r3001 122 71 2e7
+
+* Clamp signal generators for the main power-clocks
+X60 114 116 117 113 710 70 71 Clp                           $ VPhi4P VPhi6P VPhi7P VPhi3P C0
+X61 115 117 110 114 711 70 71 Clp                           $ VPhi5P VPhi7P VPhi0P VPhi4P C1
+X62 116 110 111 115 712 70 71 Clp                           $ VPhi6P VPhi0P VPhi1P VPhi5P C2
+X63 117 111 112 116 713 70 71 Clp                           $ VPhi7P VPhi1P VPhi2P VPhi6P C3
+X64 110 112 113 117 714 70 71 Clp                           $ VPhi0P VPhi2P VPhi3P VPhi7P C4
+X65 111 113 114 110 715 70 71 Clp                           $ VPhi1P VPhi3P VPhi4P VPhi0P C5
+X66 112 114 115 111 716 70 71 Clp                           $ VPhi2P VPhi4P VPhi5P VPhi1P C6
+X67 113 115 116 112 717 70 71 Clp                           $ VPhi3P VPhi5P VPhi6P VPhi2P C7
+
+* Clamp signal generators for the first set of data-controlled clocks (desgnated pp)
+X70 ppC ppE ppF ppB 730 70 71 Clp                           $ VPhi4P VPhi6P VPhi7P VPhi3P C0
+X71 ppD ppF pp8 ppC 731 70 71 Clp                           $ VPhi5P VPhi7P VPhi0P VPhi4P C1
+X72 ppE pp8 pp9 ppD 732 70 71 Clp                           $ VPhi6P VPhi0P VPhi1P VPhi5P C2
+X73 ppF pp9 ppA ppE 733 70 71 Clp                           $ VPhi7P VPhi1P VPhi2P VPhi6P C3
+X74 pp8 ppA ppB ppF 734 70 71 Clp                           $ VPhi0P VPhi2P VPhi3P VPhi7P C4
+X75 pp9 ppB ppC pp8 735 70 71 Clp                           $ VPhi1P VPhi3P VPhi4P VPhi0P C5
+X76 ppA ppC ppD pp9 736 70 71 Clp                           $ VPhi2P VPhi4P VPhi5P VPhi1P C6
+X77 ppB ppD ppE ppA 737 70 71 Clp                           $ VPhi3P VPhi5P VPhi6P VPhi2P C7
+
+* Clamp signal generators for the first set of data-controlled clocks (desgnated uu)
+X80 uuC uuE uuF uuB 750 70 71 Clp                           $ VPhi4P VPhi6P VPhi7P VPhi3P C0
+X81 uuD uuF uu8 uuC 751 70 71 Clp                           $ VPhi5P VPhi7P VPhi0P VPhi4P C1
+X82 uuE uu8 uu9 uuD 752 70 71 Clp                           $ VPhi6P VPhi0P VPhi1P VPhi5P C2
+X83 uuF uu9 uuA uuE 753 70 71 Clp                           $ VPhi7P VPhi1P VPhi2P VPhi6P C3
+X84 uu8 uuA uuB uuF 754 70 71 Clp                           $ VPhi0P VPhi2P VPhi3P VPhi7P C4
+X85 uu9 uuB uuC uu8 755 70 71 Clp                           $ VPhi1P VPhi3P VPhi4P VPhi0P C5
+X86 uuA uuC uuD uu9 756 70 71 Clp                           $ VPhi2P VPhi4P VPhi5P VPhi1P C6
+X87 uuB uuD uuE uuA 757 70 71 Clp                           $ VPhi3P VPhi5P VPhi6P VPhi2P C7
+
+* Clamp signal generators for the first set of data-controlled clocks (desgnated ww)
+X90 wwC wwE wwF wwB 760 70 71 Clp                           $ VPhi4P VPhi6P VPhi7P VPhi3P C0
+X91 wwD wwF ww8 wwC 761 70 71 Clp                           $ VPhi5P VPhi7P VPhi0P VPhi4P C1
+X92 wwE ww8 ww9 wwD 762 70 71 Clp                           $ VPhi6P VPhi0P VPhi1P VPhi5P C2
+X93 wwF ww9 wwA wwE 763 70 71 Clp                           $ VPhi7P VPhi1P VPhi2P VPhi6P C3
+X94 ww8 wwA wwB wwF 764 70 71 Clp                           $ VPhi0P VPhi2P VPhi3P VPhi7P C4
+X95 ww9 wwB wwC ww8 765 70 71 Clp                           $ VPhi1P VPhi3P VPhi4P VPhi0P C5
+X96 wwA wwC wwD ww9 766 70 71 Clp                           $ VPhi2P VPhi4P VPhi5P VPhi1P C6
+X97 wwB wwD wwE wwA 767 70 71 Clp                           $ VPhi3P VPhi5P VPhi6P VPhi2P C7
+
+r1000 bsT wv3_00 0
+r1001 bsC wv3_01 0
+r1002 SBT wv3_02 0
+r1003 SBC wv3_03 0
+r1010 SCT wv3_04 0
+r1011 SCC wv3_05 0
+r1012 120 wv3_06 0
+r1013 120 wv3_07 0
+r1020 SAT wv3_08 0
+r1021 SCT wv3_09 0
+r1022 SET wv3_10 0
+r1023 110 wv3_11 0
+r1030 ppA wv3_12 0
+r1031 pX wv3_13 0
+r1032 ppF wv3_14 0
+r1033 uuA wv3_15 0
+r1040 uX  wv3_16 0
+r1041 uuF wv3_17 0
+r1042 wwA wv3_18 0
+r1043 wX  wv3_19 0
+r1050 wwF wv3_20 0
+r1051 bsT wv3_21 0
+r1052 121 wv3_22 0
+r1053 122 wv3_23 0
+
+r2000 bsT wv4_00 0
+r2001 bsC wv4_01 0
+r2002 SBT wv4_02 0
+r2003 SBC wv4_03 0
+r2010 SCT wv4_04 0
+r2011 SCC wv4_05 0
+r2012 bsT wv4_06 0
+r2013 bsT wv4_07 0
+r2020 bsT wv4_08 0
+r2021 bsT wv4_09 0
+r2022 bsT wv4_10 0
+r2023 bsT wv4_11 0
+r2030 bsT wv4_12 0
+r2031 bsT wv4_13 0
+r2032 bsT wv4_14 0
+r2033 bsT wv4_15 0
+r2040 720 wv4_16 0
+r2041 721 wv4_17 0
+r2042 722 wv4_18 0
+r2043 723 wv4_19 0
+r2050 724 wv4_20 0
+r2051 725 wv4_21 0
+r2052 726 wv4_22 0
+r2053 727 wv4_23 0
+
+.inc saa.cir
