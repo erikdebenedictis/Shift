@@ -177,6 +177,7 @@ A3 22 23 power_tally                                        $ 23 is cumulative e
 ***************************************************************************************************
 * NGSPICE CONTROL AREA
 .TRAN 'tstep' 'ticks*tick'
+.csparam pCkt = 'Ckt'
 .csparam pMD = 'MD'
 .csparam pVp = 'Vp'
 .csparam pHz = 'Hz'
@@ -210,13 +211,30 @@ A3 22 23 power_tally                                        $ 23 is cumulative e
 .csparam pVx = 'Vx'                                         $ Voltage of boost above Vdd [nRERL, between eq. (5)]
 
 .csparam pSc = '1.0/Vp'                                     $ scale factor so waveforms on plots are spaced vertically by 1
-.csparam pSs = '0.3/Vp'
+.csparam pSs = '.17/Vp'
 
 .control
 .inc th.cir                                                 $ th.cir can be on a local disk while aa.cir ar.cir and q2.cir are on a network drive
 * pre_set strict_errorhandling
 unset ngdebug
 *save all @m.x30.x0.x0.m1[Id] @m.x0.m3[Id] @m.x0.m5[Id] @m.x0.m7[Id] @m.x0.m5[Id] @m.x0.m6[Id] @m.x0.m8[Id] @m.x0.m9[Id] @m.x0.m10[Id]
+if $&pCkt = 2
+set cktname="S2LAL"
+else
+if $&pCkt = 3
+set cktname="Q2LAL"
+else
+if $&pCkt = 4
+set cktname="nRERL"
+else
+if $&pCkt = 5
+set cktname="NNote"
+else
+set cktname="other"
+end
+end
+end
+end
 
 let loop = 0
 let limit = $&pxn * abs($&pyn)
@@ -276,7 +294,7 @@ let nmeas=pPds-3
 meas tran E_nRERL1us INTEG v(16) from=0 to=$&tinit          $ Reintegrate instantaneous power in total for 5 us, with result in a variable
 meas tran E_nRERLLev INTEG v(16) from=$&tinit to=$&pW       $ Reintegrate instantaneous power in total from 5 us to 400 us, with result in a variable
 echo -------------------nRERL $&E_nRERL1us , $&E_nRERLLev
-echo $&loop ckt , 1u , $&E_nRERL1us , energy , $&E_nRERLLev , Vp , $&pVp , Per , $&pPer , Cg , $&pCg , Cx , $&pCx , b , $&pb , m , $&pm , Vx , $&pVx , WS , $&pWS , WL , $&pWL>>Q2LALnRERL.csv
+echo $&loop $cktname , 1u , $&E_nRERL1us , energy , $&E_nRERLLev , Vp , $&pVp , Per , $&pPer , Cg , $&pCg , Cx , $&pCx , b , $&pb , m , $&pm , Vx , $&pVx , WS , $&pWS , WL , $&pWL>>Q2LALnRERL.csv
 
 meas tran E_Adiaini INTEG v(16) from=0 to=$&tinit           $ Reintegrate instantaneous power for initialization, with result in a variable
 meas tran E_AdiaRun INTEG v(16) from=$&tinit to=$&pW        $ Reintegrate instantaneous power minus initialization, with result in a variable
@@ -284,7 +302,7 @@ let EncJ = max(E_AdiaRun/nmeas, 1.03e-17)                   $ the integral is fo
 let EncfJ = '$&EncJ*1e15'
 echo -------------------Adiabatic $&E_Adiaini , $&E_AdiaRun
 echo -----------------------------------------* Adia Ecycle $&EncJ J $&EncfJ fJ
-echo * $&loop Adia , $&pMD , $&E_Adiaini , $&EncJ , $&pVp , $&twv , $&pVp , $&tste , $&pCx , $&fstp , $&pWS , $&pwX , $&pGnT1 , $&pGnV1 , $&pGnT2 , $&pGnV2 ,
+echo * $&loop $cktname , $&pMD , $&E_Adiaini , $&EncJ , $&pVp , $&twv , $&pVp , $&tste , $&pCx , $&fstp , $&pWS , $&pwX , $&pGnT1 , $&pGnV1 , $&pGnT2 , $&pGnV2 ,
 + "x MD Eini Ecyc Vdd tw Vx tstep Cw temp WS wX o1 h1 o2 h2 legend">>"gp/Adia.csv"
 
 * white background
@@ -350,11 +368,11 @@ gnuplot gp/$fn xlimit 0 $&pW ylimit 0 25
 + v(wv4_20)*$&pSc+3  v(wv4_21)*$&pSc+2  v(wv4_22)*$&pSc+1  v(wv4_23)*$&pSc+0
 end
 
-if 1
+if $&pCkt=5
 set fn=f$&loop+6+nnote
 gnuplot gp/$fn xlimit 0 $&pW ylimit 0 7
 + title "6. Note Note slide. V=$&pVp,$&pPer C=$&pCg,$&pCx ($&pb,$&pm,$&pVx) w=$&pWS/$&pWL"
-+ v(wv3_07)*$&pSs+1.2*$&pSs+6
++ v(wv3_07)*$&pSs*2+1.2*$&pSs*2+6
 + v(wv3_08)*$&pSs+5.1   v(wv3_09)*$&pSs+5.05  v(wv3_10)*$&pSs+5     v(wv3_11)*$&pSs+4.50
 + v(wv3_12)*$&pSs+4.25  v(wv3_13)*$&pSs+4.05  v(wv3_14)*$&pSs+4     v(wv3_15)*$&pSs+3.75
 + v(wv3_16)*$&pSs+3.55  v(wv3_17)*$&pSs+3.50  v(wv3_18)*$&pSs+3.25  v(wv3_19)*$&pSs+3.05
@@ -373,23 +391,24 @@ end
 
 *** SETUP INSTRUCTIONS
 * The following files must be present in the working directory:
-* saa.cir (this file): The main file, yet containing a "test harness"; the user will run one of the main programs below and .include saa.cir at the end
+* saa.cir (this file): The main file, yet just containing a "test harness"; the user will run one of the main programs below:
 * sS2.cir: Static 2-Level Adiabatic Logic (S2LAL) shift register circuit, with .include saa.cir at the end
 * sQ2.cir: Quiet 2-Level Adiabatic Logic (Q2LAL) shift register circuit, with .include saa.cir at the end
 * snR.cir: nMOS Reversible Energy Recovery Logic (nRERL) shift register circuit, with .include saa.cir at the end
+* nn.cir: Note note prototype quantum computer control circuit, with .include saa.cir at the end
 
 * The following must be available:
-* The working directory must have gp subdirectory. The software deposits output files in the subdirectory to reduce clutter
+* The working directory must have a gp subdirectory. The software deposits output files in the subdirectory to reduce clutter
 * An ngspice installation. This file was tested with version 36. A gnuplot installation allows more sophisticated plots [ngspice 36, section 18.7.1].
 * modelcard.nmos and modelcard.pmos: device models for BSIM4 from ngspice distribution (optional)
 * ps_nsoi1_uni.58.scs and ps_psoi1_uni.58.scs: device models for the undisclosed SOI transistor [undisclosed SOI] (optional)
 * Sky130 PDK, see notes below (optional)
 
 *** STRUCTURING
-* The a script file that contains
+* The main program contains
 *     (a) a parameter line
-*     (b) the three-stage shift register circuit under test
-*     (c) the line .include saa.cir.
+*     (b) the circuit under test
+*     (c) the line .include saa.cir
 * The saa.cir file includes:
 *     (a) DC supply voltages GND and Vp on 70 and 71
 *     (b) 8-phase clocks on 110-117, responsive to parameters for frequency and fine control of waveform shape
@@ -401,10 +420,10 @@ end
 *     information at the end of the file.
 
 *** RAMP SHAPE
-* Linear ramps are ubiquitous in the literature, but ramps whose shape is flatter in the middle yield lower dissipation. Ramps are described in this software as having
-* unit width and height, so a linear ramp goes from (t=0, v=0) to (t=1, v=1). However, this software describes only the portion (t=0, v=0) to (t=.5, v=.5), fliping this
-* curve both horizontally and vertically to create the second half. The described portion is controlled by two points (o1, h1) and (o2, h2), o for offset, 0 <= o1 <= o2
-* <= .5 and h for height, where nominally 0 <= h <= 1, but h could extend futher. This defines a 5-segement ramp.
+* Linear ramps are ubiquitous in the literature, but ramps that are flatter in the middle can dissipate less. Ramps are described in this software as having unit width
+* and height, so the baseline linear ramp goes from (t=0, v=0) to (t=1, v=1). Pretty good ramps can be created by dividng the unit time into five linear subramps of
+* length .2. With two parameters, h1 and h2 (h for height), the segmented ramp will go through the following points: (t=0 v=0), (t=.2 v=h1), (t=.4 v=h2), (t=.6 h=1-h2),
+* (t=.8, h=1-h1), (t=1 v=1). For additional generality, the time divisons are defined by statements o1=.2 and o2=.4, which can be changed.
 
 * Notes:
 * Q2LAL is a significant conceptual modification to S2LAL, albeit one that differs only in one transistor.

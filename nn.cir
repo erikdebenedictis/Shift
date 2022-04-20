@@ -1,4 +1,4 @@
-  Q2LAL top level script
+  Note note top level script
 * [Under ngspice 36, { sS2, sQ2, snR, saa }.cir are an introduction to S2LAL, Q2LAL, and nRERL circuit.  Use files in vcs checked in h:mm PM d/mm/2022 (public)]
 
 * Copyright 2022 Zettaflops, LLC
@@ -16,7 +16,7 @@
 * limitations under the License.
 
 * The top-level control is to switch which of the next lines are commented.
-.param T=27 Div=100 mn=1 mp=2 pW=2 Wd=4                     $ defaults for control lines; override if needed, otherwise leave these alone
+.param Ckt=5 T=27 Div=20 mn=1 mp=2 pW=2 Wd=6                $ defaults for control lines; override if needed, otherwise leave these alone
 .param o1=.20 h1=.34 o2=.40 h2=.465                         $ defaults for control lines; override if needed, otherwise leave these alone
 
 *.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
@@ -42,7 +42,7 @@
 * 0 Adia , 4 , 1.15347E-13 , 4.47025E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 166.608
 
 *** RUN 3 Sky130 (this control line enabled by default)
-.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.7       xn=1 xh=1.7      yl=.465     yn=-1 yh=.465
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.8       xn=3 xh=2.0      yl=.465     yn=-1 yh=.465
 * 0 Adia , 5 , 2.79583E-14 , 1.29906E-14 , 1.4 , 0.4675 , 1.4 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 158.317 4/12/22 4:23 4130
 *param MD=5 Vt=.75v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34     yl=.4625  yn=-1 yh=.4625
 * 3 Adia , 5 , 2.79895E-14 , 1.03621E-14 , 1.5 , 0.4625 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.4625 , 185.288 4/12/22 7:06 4130
@@ -63,7 +63,7 @@
 * Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.19894E-14 to 3.21366E-14 (factor of 1.3066) /100
 .param xvar=.38 yvar=.46                                    $ optional dummy variables that will be modified by the looping code in saa.cir
 *.param h1=xvar h2=yvar
-*.param Vp=xvar
+.param Vp=xvar
 
 * The following equations are correct, but in the circuit Cg and Cx are in parallel with the simulated devices, which are not accounted for
 .param b='Cg/(Cg+Cx)'                                       $ [nRERL, between eq. (1) and eq. (2)]

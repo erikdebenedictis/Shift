@@ -16,8 +16,8 @@
 * limitations under the License.
 
 * The top-level control is to switch which of the next lines are commented.
-.param T=27 Div=100 mn=1 mp=2 o1=.15 h1=.15 o2=.30 h2=.30   $ defaults for control lines; nRERL does not benefit from a s-shaped ramp
-
+.param Ckt=4 T=27 Div=100 mn=1 mp=2                         $ defaults for control lines; nRERL does not benefit from a s-shaped ramp
+.param o1=.15 h1=.15 o2=.30 h2=.30                          $ defaults for control lines; nRERL does not benefit from a s-shaped ramp
 *.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
 
 
