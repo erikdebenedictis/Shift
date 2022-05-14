@@ -1,0 +1,76 @@
+magic
+tech sky130A
+timestamp 1652307875
+<< poly >>
+rect -255 135 -150 145
+rect -255 115 -245 135
+rect -225 130 -150 135
+rect -225 115 -215 130
+rect -255 105 -215 115
+<< polycont >>
+rect -245 115 -225 135
+<< locali >>
+rect -260 230 -150 250
+rect 615 230 635 250
+rect -255 135 -215 145
+rect -255 115 -245 135
+rect -225 115 -215 135
+rect -255 105 -215 115
+rect -250 -50 -225 105
+rect -195 65 -170 230
+rect -195 45 -150 65
+rect -195 40 -170 45
+rect -260 -70 -150 -50
+rect 615 -70 635 -50
+<< metal1 >>
+rect -85 345 -70 360
+rect -45 345 -30 360
+rect 0 345 15 360
+rect 55 345 70 360
+rect 135 345 150 360
+rect 215 340 250 360
+rect 315 345 330 360
+rect 395 345 410 360
+rect 450 345 465 360
+rect 495 345 510 360
+rect 535 345 550 360
+use QAAmp11  QAAmp11_0
+timestamp 1652306591
+transform 1 0 -5 0 -1 20
+box -145 -70 620 200
+use QAAmp11  QAAmp11_1
+timestamp 1652306591
+transform 1 0 -5 0 1 160
+box -145 -70 620 200
+<< labels >>
+flabel metal1 -80 360 -80 360 1 FreeSans 80 0 0 120 p3T
+port 11 n
+flabel metal1 -40 360 -40 360 1 FreeSans 80 0 0 120 Cl0
+port 8 n
+flabel metal1 5 360 5 360 1 FreeSans 80 0 0 120 p7T
+port 12 n
+flabel metal1 65 360 65 360 1 FreeSans 80 0 0 120 GND
+port 13 n
+flabel metal1 235 360 235 360 1 FreeSans 80 0 0 120 PWR
+port 14 n
+flabel metal1 325 360 325 360 1 FreeSans 80 0 0 120 p2T
+port 9 n
+flabel metal1 400 360 400 360 1 FreeSans 80 0 0 120 GN2
+port 15 n
+flabel metal1 460 360 460 360 1 FreeSans 80 0 0 120 p4T
+port 6 n
+flabel metal1 500 360 500 360 1 FreeSans 80 0 0 120 Cl1
+port 10 n
+flabel metal1 540 360 540 360 1 FreeSans 80 0 0 120 p0T
+port 5 n
+flabel locali -260 240 -260 240 3 FreeSans 80 0 -120 0 AT
+port 1 e
+flabel locali -260 -60 -260 -60 3 FreeSans 80 0 -120 0 AC
+port 2 e
+flabel locali 635 240 635 240 7 FreeSans 80 0 120 0 QT
+port 3 w
+flabel locali 635 -60 635 -60 7 FreeSans 80 0 120 0 QC
+port 4 w
+flabel metal1 140 360 140 360 1 FreeSans 80 0 0 120 p1T
+port 7 n
+<< end >>

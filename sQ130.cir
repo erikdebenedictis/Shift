@@ -1,0 +1,384 @@
+  Q2LAL top level script
+* [Under ngspice 36, { sS2, sQ2, snR, saa }.cir are an introduction to S2LAL, Q2LAL, and nRERL circuit.  Use files in vcs checked in h:mm PM d/mm/2022 (public)]
+
+* Copyright 2022 Zettaflops, LLC
+
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+
+*     http://www.apache.org/licenses/LICENSE-2.0
+
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+* The top-level control is to switch which of the next lines are commented.
+.param Ckt=3 T=27 Div=100 mn=1 mp=2                         $ defaults for control lines; override if needed, otherwise leave these alone
+.param o1=.20 h1=.34 o2=.40 h2=.465                         $ defaults for control lines; override if needed, otherwise leave these alone
+
+*.param      Vp=5v      MD=3        Vt=2.5v   Cg=1e-12    Cx=5e-18    wX=1        ww=60u      ll=.5u
+.param MD=5 Vt=.75v Vp=1.2v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.1       xn=1  xh=.105     yl=.37      yn=-1 yh=.38 $ 2.72921E-14 o1=.1 h1=.29 o2=.37 h2=.46 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.2v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.2       xn=9  xh=2.0     yl=.37      yn=-1 yh=.38 $ 1.0616E-14 Vp=1.6 o1=.1 h1=.29 o2=.37 h2=.46 Porch=.01 /20
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.165      xn=1 xh=.165     yl=.41      yn=-1 yh=.41 $ 1.28828E-14 Vp=1.4 o1=0.1 h1=.165 o2=0.3 h2=0.41 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675 $ 1.29906E-14 Vp=1.4 o1=0.2 h1=0.35 o2=0.40 h2=0.4675 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675 $ 1.29906E-14 Vp=1.4 o1=0.2 h1=0.35 o2=0.40 h2=0.4675 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.6v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34      yl=.465     yn=-1 yh=.465 $ 9.45632E-15 Vp=1.6 o1=0.2 h1=0.34 o2=0.4 h2=0.465 Porch=.01 /100
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=5 xh=.36      yl=.46      yn=-5 yh=.48 $ 9.34458E-15 , 1.7 o1=0.2 h1=0.34 o2=0.4 h2=0.465 Porch=.01 /100
+
+*** RUN 1 Builtin BSIM 3
+***param MD=3 J_S=1 Vp=9V       Hz=1e6      wX=1  ww=5u       ll=5u       Cw=.01p     Cb=5e-12    xl=9        xn=5  xh=5        yl=1e6      yn=1  yh=5e7
+***param MD=5 Vt=.75v Vp=1.4v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+*.param MD=3 Vt=2.5v Vp=5.0v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 3 , 8.33834E-13 , 5.41552E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 105.894 4/16/22 6:07 4130
+* 0 Adia , 3 , 1.99904E-12 , 6.27097E-13 , 5 , 0.4675 , 5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 76.093 4/18/22 6:30 4130
+
+*** RUN 2 Speculative BSIM 4
+***param MD=4 J_S=0 Vp=.275V    Hz=1e6      wX=1  ww=600e-9   ll=20e-9    Cw=.01p     Cb=5e-14    xl=.275     xn=5  xh=.175     yl=1e6      yn=1  yh=25e6
+*param MD=4 Vt=.12v Vp=.28v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 4 , 3.65796E-14 , 3.86714E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 164.278 4/16/22 6:01 4130
+* 0 Adia , 4 , 1.15347E-13 , 4.47025E-14 , 0.28 , 0.4675 , 0.28 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 166.608
+
+*** RUN 3 Sky130 (this control line enabled by default)
+.param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=1.7       xn=1 xh=1.7      yl=.465     yn=-1 yh=.465
+* 0 Adia , 5 , 2.79583E-14 , 1.29906E-14 , 1.4 , 0.4675 , 1.4 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 158.317 4/12/22 4:23 4130
+*param MD=5 Vt=.75v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34     yl=.4625  yn=-1 yh=.4625
+* 3 Adia , 5 , 2.79895E-14 , 1.03621E-14 , 1.5 , 0.4625 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.4625 , 185.288 4/12/22 7:06 4130
+*param MD=5 Vt=.75v Vp=1.6v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.34      yl=.465     yn=-1 yh=.465
+* 0 Adia , 5 , 2.96714E-14 , 9.45632E-15 , 1.6 , 0.465 , 1.6 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.642 4/12/22 4:18 4130
+*param MD=5 Vt=.75v Vp=1.7v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.34       xn=1 xh=.36      yl=.465    yn=-1 yh=.48
+* 0 Adia , 5 , 3.23181E-14 , 9.34458E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 163.88 4/12/22 3:58 4130
+* 0 Adia , 5 , 5.74007E-14 , 9.83645E-15 , 1.7 , 0.465 , 1.7 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.34 , 0.4 , 0.465 , 158.037 4/18/22 6:23 4130
+
+*** RUN 4 [undisclosed soi]
+*param MD=6 Vt=.12v Vp=1.5v   Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-15    Cx=5e-18    xl=.35       xn=1 xh=.35      yl=.4675    yn=-1 yh=.4675
+* 0 Adia , 6 , 1.57512E-13 , 3.94595E-14 , 1.5 , 0.4675 , 1.5 , 1.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 187.226 4/16/22 8:05 4130
+* 0 Adia , 6 , 3.99675E-13 , 3.93922E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 237.862 4/16/22 7:49 4130
+* 0 Adia , 6 , 4.87778E-13 , 4.44046E-14 , 1.5 , 0.4675 , 1.5 , 0.25 , 5E-18 , 27 , 1 , 1 , 0.2 , 0.35 , 0.4 , 0.4675 , 225.348 4/18/22 5:45 4130
+*.param MD=5 Vt=.75v Vp=3v     Hz=1e6            wX=1  ww=500e-9   ll=150e-9   Cg=5e-16    Cx=5e-18    xl=3        xn=1  xh=1.2      yl=5e5      yn=3  yh=2e6
+
+* Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.22185E-14 to 3.18945E-14 (factor of 1.3237) /20
+* Optimal wave shape line: .param o1=0.15 h1=.3375          $ Optimal wave shape; improves from 4.19894E-14 to 3.21366E-14 (factor of 1.3066) /100
+.param xvar=.38 yvar=.46                                    $ optional dummy variables that will be modified by the looping code in saa.cir
+*.param h1=xvar h2=yvar
+*.param Vp=xvar
+
+* The following equations are correct, but in the circuit Cg and Cx are in parallel with the simulated devices, which are not accounted for
+.param b='Cg/(Cg+Cx)'                                       $ [nRERL, between eq. (1) and eq. (2)]
+.param m='Vp/Vt'                                            $ [nRERL, between Fig. 5 axis]
+.param Vx='Vp*(1+b)-Vt'                                     $ [nRERL, between eq. (5)]
+.param ACAP=0.001e-15                                       $ capacitive load on the data line
+.param Cw=.01p 
+
+* The following width-multiplying parameter increases the drive capability of a data-controlled clock. Set to 1 to disable this feature.
+.param ClkW=1                                               $ width multiplier for the data controlled clock drivers, except 1 in compatibility MD=2 (and always)
+
+*** SUBCIRCUIT DEFINITIONS
+
+* SPICE3 file created from qPhase11.ext - technology: sky130A
+
+.subckt QAAmp11 S0T S0C S1T p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T Vp GND
+X0 T S0C p1T GND sky130_fd_pr__nfet_01v8 ad=1.2025e+12p pd=9.8e+06u as=3.75e+11p ps=2.6e+06u w=450000u l=150000u
+X1 GND Cl0 T GND sky130_fd_pr__nfet_01v8 ad=5.025e+11p pd=4.2e+06u as=0p ps=0u w=450000u l=150000u
+X2 S1T p0T T GND sky130_fd_pr__nfet_01v8 ad=2.925e+11p pd=2.2e+06u as=0p ps=0u w=450000u l=150000u
+X3 T S0T GND GND sky130_fd_pr__nfet_01v8 ad=0p pd=0u as=0p ps=0u w=450000u l=150000u
+X4 S1T p4T T Vp sky130_fd_pr__pfet_01v8 ad=2.25e+11p pd=1.9e+06u as=2.7e+11p ps=2.1e+06u w=450000u l=150000u
+X5 T S0T p1T Vp sky130_fd_pr__pfet_01v8 ad=0p pd=0u as=2.25e+11p ps=1.9e+06u w=450000u l=150000u
+.ends
+
+.subckt qLatch11 AT AC QT QC p0T p1T p7T GN2 PWR p2T p3T p4T GND Cl0 Cl1
+XQAAmp11_0 AC AT QC p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T PWR GND QAAmp11
+XQAAmp11_1 AT AC QT p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T PWR GND QAAmp11
+.ends
+
+.subckt qPhase11 S0T S0C S1T S1C p0T p0C p1T Cl1 p2T Cl2 p3T p3C GN2 PWR
+XqLatch11_0 S0T S0C S1T S1C p0T p1T p3C GN2 PWR p2T p3T p0C GN2 Cl1 Cl2 qLatch11
+XqLatch11_1 S1T S1C S0T S0C p3T p2T p0C GN2 PWR p1T p0T p3C GN2 Cl2 Cl1 qLatch11
+C0 S0T GN2 2.20fF
+C1 S1T GN2 2.41fF
+C2 S1C GN2 2.66fF
+C3 S0C GN2 2.44fF
+C4 PWR GN2 3.19fF
+.ends
+
+*** SUBCIRCUIT DEFINITIONS
+* Erik's "two hat" adiabatic amplifier, with latch. In S2LAL notation, it expects data input as A^ and -A^. Given this, it produces the correct output [main, Fig. 15].
+* Same role in framework as [7-Frank 20, Fig. 4], Athas's adiabatic amplifier but with complementary voltages on the two halves [4-Athas 94].
+*  : alignment  :   guide    :            :            :            :            :            :            :            :
+* 1: A(i-1)^   2: -A(i-1)^  3: Q(i)^     4: phi(i)^   5: Clmp(i-1)v6: GND       7: phi(i-1)^ 8: phi(i+3)^ 9: d/p2T    10: d/Cl1
+*11: d/p3T    12: d/p7T    13: psub/Vp  14: nsub/GND 15: test
+* PW parameter is the width of the drivers on the TRUE only side
+.SUBCKT QAAmp AT AC QT pT Cl GND pjT pjC DM0 DM1 DM2 DM3 psub nsub T ini='gg' PW=1.002
+.ic V(T)='ini'                                              $ .ic V(a2)=ini
+xM0 pT AC T nsub nFET n=1 m=PW                              $ transmission gate
+xM1 GND Cl T nsub nFET n=1 m=1                              $ clamp
+xM2 T pjT QT nsub nFET n=1 m=PW                             $ Frank's latch
+xM3 GND AT T nsub nFET n=1 m=1                              $ clamp
+xM4 T pjC QT psub pFET n=1 m=PW
+xM5 pT AT T psub pFET n=1 m=PW                              $ transmission gate
+.ENDS QAAmp
+
+.subckt QAAmp1 S0T S0C S1T p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T Vp GND T
++ ini='gg' PW=1.002                                         $ add this line to the extracted circuit
+.ic V(T)='ini'                                              $ add this line to the extracted circuit
+X0 T S0C p1T GND nFET n=1 m=1
+X1 GND Cl0 T GND nFET n=1 m=1
+X2 S1T p0T T GND nFET n=1 m=1
+X3 T S0T GND GND nFET n=1 m=1
+X4 S1T p4T T Vp pFET n=1 m=1
+X5 T S0T p1T Vp pFET n=1 m=1
+.if (0)
+C0 GN2 p0T 0.10fF
+C1 Vp p1T 0.36fF
+C2 S0C p1T 0.08fF
+C3 p1T T 0.41fF
+C4 p2T p1T 0.08fF
+C5 Cl0 p1T 0.15fF
+C6 p3T p7T 0.17fF
+C7 S0T p1T 0.62fF
+C8 Vp p7T 0.01fF
+C9 S1T Vp 0.06fF
+C10 S1T p4T 0.17fF
+C11 Vp p4T 0.11fF
+C12 p7T T 0.04fF
+C13 S1T Cl1 0.04fF
+C14 S0C p3T 0.06fF
+C15 S1T T 0.16fF
+C16 p4T Cl1 0.43fF
+C17 Cl0 p7T 0.50fF
+C18 Vp T 0.09fF
+C19 S1T GN2 0.04fF
+C20 S0T p7T 0.04fF
+C21 p4T T 0.14fF
+C22 Cl0 p3T 0.53fF
+C23 Vp GN2 0.12fF
+C24 Vp p2T 0.20fF
+C25 S0T p3T 0.04fF
+C26 p4T GN2 0.35fF
+C27 p4T p2T 0.16fF
+C28 Cl1 T 0.04fF
+C29 S0C T 0.02fF
+C30 S0T Vp 0.26fF
+C31 GN2 Cl1 0.14fF
+C32 p2T Cl1 0.07fF
+C33 S0T p4T 0.02fF
+C34 GN2 T 0.04fF
+C35 p2T T 0.06fF
+C36 S1T p0T 0.25fF
+C37 Cl0 S0C 0.01fF
+C38 Cl0 T 0.11fF
+C39 GN2 p2T 0.19fF
+C40 S0T S0C 0.04fF
+C41 S0T T 0.09fF
+C42 p4T p0T 0.22fF
+C43 Cl1 p0T 0.48fF
+C44 p7T p1T 0.14fF
+C45 S0T Cl0 0.18fF
+C46 p3T p1T 0.05fF
+C47 S1T p1T 0.01fF
+C48 Cl1 GND 0.19fF
+C49 GN2 GND 0.16fF
+C50 p2T GND 0.15fF
+C51 p7T GND 0.47fF
+C52 p3T GND 0.25fF
+C53 S1T GND 0.42fF
+C54 p1T GND 0.68fF
+C55 p0T GND 0.44fF
+C56 p4T GND 0.44fF
+C57 S0T GND 0.71fF
+C58 S0C GND 0.30fF
+C59 Cl0 GND 0.61fF
+C60 Vp GND 0.58fF
+C61 T GND 0.61fF
+.endif
+.ends QAAmp1
+
+* This is the dual-rail version; it is a pair of latched amplifiers with two rails in and two rails out
+* Erik's "two hat" adiabatic amplifier plus pass gate. In S2LAL notation, it expects data input as A^ and -A^. Given this, it produces the correct output
+* per [main, Fig. 15] followed by two pass gates.
+* Same role in framework as [7-Frank 20, Fig. 5 left].
+*  : alignment  :   guide    :            :            :            :            :            :            :            :
+* 1: A(i-1)^   2: -A(i-1)^  3: Q(i)^     4: -Q(i)^    5: pjT       6: piT       7: dummy     8: GND       9: PWR C(i)^10: dummy
+*11: dummy    12: pjC      13: nsub     14: Cli      15: dummy
+* PW parameter is the width of the AAmp driver and pass transistors on the TRUE side only
+.SUBCKT qLatch   AT AC QT QC pjT piT DM1 GND PWR DM3 DM2 pjC nsub Cli DM4 ini='gg' PW=1.004   $ substrate supplies
+X1 AC AT QT piT Cli GND pjT pjC DM0 DM1 DM2 DM3 PWR nsub T QAAmp ini='ini' PW=1
+X2 AT AC QC piT Cli GND pjT pjC DM4 DM5 DM6 DM7 PWR nsub C QAAmp ini='vv-ini' PW=1
+.ENDS qLatch
+
+.subckt qLatch1 AT AC QT QC p0T p1T p7T GN2 PWR p2T p3T p4T GND Cl0 Cl1
++ ini='gg' PW=1.004                                         $ add this line to the extracted circuit
+XQAAmp11_0 AC AT QT p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T PWR GND T QAAmp1 ini='ini' PW=1
+XQAAmp11_1 AT AC QC p1T Cl0 GN2 p0T p4T p2T Cl1 p3T p7T PWR GND C QAAmp1 ini='vv-ini' PW=1
+C0 AT p1T 0.09fF
+C1 AT AC 0.36fF
+C2 QT QC 0.02fF
+C3 AC p1T 0.03fF
+.if (0)
+C4 QAAmp11_0/T QAAmp11_1/T 0.31fF
+C5 AT QAAmp11_0/T 0.05fF
+C6 QAAmp11_1/T QC 0.01fF
+C7 AT QAAmp11_1/T 0.01fF
+C8 QAAmp11_0/T p1T 0.07fF
+C9 p1T QAAmp11_1/T 0.07fF
+C10 QAAmp11_0/T QT 0.01fF
+C11 AC QAAmp11_1/T 0.05fF
+C12 QT GND 0.45fF
+C13 AT GND 1.27fF
+C14 AC GND 1.45fF
+C15 PWR GND 1.40fF
+C16 QAAmp11_1/T GND 0.61fF
+C17 Cl1 GND 0.36fF
+C18 GN2 GND 0.31fF
+C19 p2T GND 0.29fF
+C20 p7T GND 0.93fF
+C21 p3T GND 0.49fF
+C22 QC GND 0.45fF
+C23 p1T GND 1.35fF
+C24 p0T GND 0.88fF
+C25 p4T GND 0.87fF
+C26 Cl0 GND 1.21fF
+C27 QAAmp11_0/T GND 0.61fF
+.endif
+.ends
+
+* One phase of a Q2LAL shift register [main, Fig. 14b].
+* Same role in framework as one loop of [7-Frank 20, Fig. 6].
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: S0        2: -S0       3: S1        4: -S1
+* 5: phi(0)^   6: phi(0)v   7: phi(1)^   8: Cl1       9: phi(2)^  10: Cl2      11: phi(3)^  12: phi(3)v
+*13: GND      14: PWR
+* QW is the width of the pass transistors, TRUE side only, forward direction, see [main, Fig. 16a] circle-1
+* RW is the width of the pass transistors, TRUE side only, reverse direction, see [main, Fig. 15a] circle-2
+.SUBCKT qPhase S0T S0C S1T S1C                              $ One stage of the 2LAL shift register. Args: AT/C QT/C
++ p0T p0C p1T Cl1 p2T Cl2 p3T p3C GND PWR                   $ two clocks T/C and two clocks T&clamp DC Supply substrate supplies
++ ini='gg' QW=1.0066 RW=1.006
+X0  S0T S0C S1T S1C p0T p1T DM1 GND PWR DM3 DM2 p0C GND Cl1 DM4 qLatch ini=ini PW=QW
+X10 S1T S1C S0T S0C p3T p2T DM1 GND PWR DM3 DM2 p3C GND Cl2 DM4 qLatch ini=ini PW=RW
+C3 S1T GND Cw                                               $ NEWNEW wire capacitance on output only, presuming forward clocking
+C4 S1C GND Cw
+.ends qPhase
+
+.subckt qPhase1 S0T S0C S1T S1C p0T p0C p1T Cl1 p2T Cl2 p3T p3C GN2 PWR
++ ini='gg' QW=1.0066 RW=1.006                               $ add this line to the extracted circuit
+XqLatch11_0 S0T S0C S1T S1C p0T p1T p3C GN2 PWR p2T p3T p0C GN2 Cl1 Cl2 qLatch1
+XqLatch11_1 S1T S1C S0T S0C p3T p2T p0C GN2 PWR p1T p0T p3C GN2 Cl2 Cl1 qLatch1
+.if (0)
+C0 S0T S0C 0.67fF
+C1 S1T S1C 0.18fF
+C2 Cl1 S0T 0.20fF
+C3 S0T p3C 0.14fF
+C4 Cl2 S1C 0.02fF
+C5 S0T p1T 0.04fF
+C6 Cl1 S0C 0.14fF
+C7 S1T p0T 0.20fF
+C8 p2T S1C 0.06fF
+C9 S0T p3T 0.26fF
+C10 S0C p3T 0.19fF
+C11 Cl2 S1T 0.15fF
+C12 S0T GN2 2.20fF
+C13 S1T GN2 2.41fF
+C14 S1C GN2 2.66fF
+C15 qLatch11_1/QAAmp11_1/T GN2 0.61fF
+C16 qLatch11_1/QAAmp11_0/T GN2 0.61fF
+C17 S0C GN2 2.44fF
+C18 PWR GN2 3.19fF
+C19 qLatch11_0/QAAmp11_1/T GN2 0.61fF
+C20 Cl2 GN2 1.55fF
+C21 p2T GN2 1.59fF
+C22 p3C GN2 1.79fF
+C23 p3T GN2 1.36fF
+C24 p1T GN2 1.63fF
+C25 p0T GN2 1.33fF
+C26 p0C GN2 1.79fF
+C27 Cl1 GN2 1.57fF
+C28 qLatch11_0/QAAmp11_0/T GN2 0.61fF
+.endif
+.ends qPhase 1
+
+* 8 phases of a Q2LAL shift register [main, Fig 16a], plus 2 additional phases for creating reversible busses
+* This circuit has the same role as one loop of [7-Frank 20, Fig. 6 when viewed as a Q2LAL shift register
+* However, this circuit includes a variant of P7T (and its electrical inverse P3T) that can put the first internal electrical signal into a floating state for busses
+* This feature is described in [main, Fig. 16d], but it can be disabled by the calling circuit by connecting pX to the same signal as P7T and likewise for pY and P3T
+*  : alignment  :   guide    :            :            :            :            :            :            :
+* 1: S0        2: -S0       3: S8        4: -S8
+* 5: phi(0)    6: phi(1)    7: phi(2)    8: phi(3)    9: phi(4)   10: phi(5)   11: phi(6)   12: phi(7)
+*13: pX       14: pY
+*15: Clmp(0)v 16: Clmp(1)v 17: Clmp(2)v 18: Clmp(3)v 19: Clmp(4)v 20: Clmp(5)v 21: Clmp(6)v 22: Clmp(7)
+*23: GND      24: PWR      25: nsub     26: psub
+* PW parameter is the width of the pass transistors on the bus interface, TRUE side only
+.SUBCKT qDelay SiT SiC S7T S7C                              $ Four phases that just delay. Args: 2*{ data<n>T/C }
++ p0T p1T p2T p3T p4T p5T p6T p7T pX pY                     $ clock-power supplies w/bus control; for no bus control connect to p7T and p3T
++ Cl0 Cl1 Cl2 Cl3 Cl4 Cl5 Cl6 Cl7                           $ clamps
++ GND PWR nsub psub ini='gg' PW=1.01                        $ DC Supply substrate supplies
+X0  S0T S0C S1T S1C p0T p4T p1T Cl0 p2T Cl1 P3T P7T GND PWR qPhase1 ini=gg QW=1 RW=PW
+X1  S1T S1C S2T S2C p1T p5T p2T Cl1 p3T Cl2 P4T p0T GND PWR qPhase1 ini=ini QW=1 RW=1
+X2  S2T S2C S3T S3C p2T p6T p3T Cl2 P4T Cl3 P5T p1T GND PWR qPhase1 ini=ini QW=1 RW=1
+X3  S3T S3C S4T S4C p3T p7T P4T Cl3 P5T Cl4 P6T p2T GND PWR qPhase1 ini=ini QW=1 RW=1
+X4  S4T S4C S5T S5C P4T p0T P5T Cl4 P6T Cl5 P7T p3T GND PWR qPhase1 ini=ini QW=1 RW=1
+X5  S5T S5C S6T S6C P5T p1T P6T Cl5 P7T Cl6 P0T p4T GND PWR qPhase1 ini=ini QW=1 RW=1
+X6  S6T S6C S7T S7C P6T p2T P7T Cl6 P0T Cl7 P1T p5T GND PWR qPhase1 ini=gg QW=1 RW=1
+X7  SiT SiC S0T S0C pX  pY  P0T Cl7 P1T Cl0 P2T p6T GND PWR qPhase1 ini=gg QW=PW RW=1
+.ENDS qDelay
+
+*** TOP-LEVEL CIRCUIT
+
+* A three-bit cyclic shift register with inversion each cycle
+X0  bsT inv SBT SBC 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 70 71 70 71 qDelay ini=gg PW=1
+X1  SBT SBC SCT SCC 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 70 71 70 71 qDelay ini=gg PW=1
+X2  SCT SCC inv bsT 110 111 112 113 114 115 116 117 117 113 720 721 722 723 724 725 726 727 70 71 70 71 qDelay ini=gg PW=1
+
+
+r1000 bsT wv3_00 0
+r1001 inv wv3_01 0
+r1002 SBT wv3_02 0
+r1003 SBC wv3_03 0
+r1010 SCT wv3_04 0
+r1011 SCC wv3_05 0
+r1012 bsT wv3_06 0
+r1013 bsT wv3_07 0
+r1020 bsT wv3_08 0
+r1021 bsT wv3_09 0
+r1022 bsT wv3_10 0
+r1023 bsT wv3_11 0
+r1030 bsT wv3_12 0
+r1031 bsT wv3_13 0
+r1032 bsT wv3_14 0
+r1033 bsT wv3_15 0
+r1040 bsT wv3_16 0
+r1041 bsT wv3_17 0
+r1042 bsT wv3_18 0
+r1043 bsT wv3_19 0
+r1050 bsT wv3_20 0
+r1051 bsT wv3_21 0
+r1052 bsT wv3_22 0
+r1053 bsT wv3_23 0
+
+r2000 bsT wv4_00 0
+r2001 inv wv4_01 0
+r2002 SBT wv4_02 0
+r2003 SBC wv4_03 0
+r2010 SCT wv4_04 0
+r2011 SCC wv4_05 0
+r2012 bsT wv4_06 0
+r2013 bsT wv4_07 0
+r2020 bsT wv4_08 0
+r2021 bsT wv4_09 0
+r2022 bsT wv4_10 0
+r2023 bsT wv4_11 0
+r2030 bsT wv4_12 0
+r2031 bsT wv4_13 0
+r2032 bsT wv4_14 0
+r2033 bsT wv4_15 0
+r2040 720 wv4_16 0
+r2041 721 wv4_17 0
+r2042 722 wv4_18 0
+r2043 723 wv4_19 0
+r2050 724 wv4_20 0
+r2051 725 wv4_21 0
+r2052 726 wv4_22 0
+r2053 727 wv4_23 0
+
+.inc saa.cir

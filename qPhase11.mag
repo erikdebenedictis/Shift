@@ -1,0 +1,109 @@
+magic
+tech sky130A
+magscale 1 2
+timestamp 1652308358
+<< locali >>
+rect -360 1730 -320 1770
+rect -260 1750 -180 1770
+rect -260 1710 -240 1750
+rect -200 1710 -180 1750
+rect 1430 1730 1770 1770
+rect -260 1690 -180 1710
+rect -350 1180 -270 1200
+rect -350 1170 -330 1180
+rect -360 1140 -330 1170
+rect -290 1140 -270 1180
+rect -360 1130 -270 1140
+rect 1430 1130 1690 1170
+rect -350 1120 -270 1130
+rect -270 710 -120 730
+rect -270 690 -250 710
+rect -350 670 -250 690
+rect -210 690 -120 710
+rect 1650 690 1690 1130
+rect -210 670 -180 690
+rect -350 650 -180 670
+rect 1570 650 1690 690
+rect -350 100 -270 120
+rect -350 60 -330 100
+rect -290 90 -270 100
+rect 1730 90 1770 1730
+rect -290 60 -180 90
+rect -350 50 -180 60
+rect 1590 50 1770 90
+rect -350 40 -270 50
+<< viali >>
+rect -240 1710 -200 1750
+rect -330 1140 -290 1180
+rect -250 670 -210 710
+rect -330 60 -290 100
+<< metal1 >>
+rect -10 1960 20 1990
+rect 70 1960 100 1990
+rect 160 1960 190 1990
+rect 270 1960 300 1990
+rect 430 1960 460 1990
+rect 590 1960 660 1990
+rect 790 1960 820 1990
+rect 950 1960 980 1990
+rect 1060 1960 1090 1990
+rect 1150 1960 1180 1990
+rect 1230 1960 1260 1990
+rect -260 1750 -180 1770
+rect -260 1710 -240 1750
+rect -200 1710 -180 1750
+rect -260 1690 -180 1710
+rect -350 1180 -270 1200
+rect -350 1140 -330 1180
+rect -290 1140 -270 1180
+rect -350 1120 -270 1140
+rect -330 120 -300 1120
+rect -240 730 -210 1690
+rect -270 710 -190 730
+rect -270 670 -250 710
+rect -210 670 -190 710
+rect -270 650 -190 670
+rect -350 100 -270 120
+rect -350 60 -330 100
+rect -290 60 -270 100
+rect -350 40 -270 60
+use qLatch11  qLatch11_0
+timestamp 1652307875
+transform 1 0 160 0 1 1271
+box -520 -391 1270 751
+use qLatch11  qLatch11_1
+timestamp 1652307875
+transform -1 0 1090 0 1 191
+box -520 -391 1270 751
+<< labels >>
+flabel locali 1610 1750 1610 1750 7 FreeSans 160 0 240 0 S1T
+port 3 w
+flabel locali 1610 1150 1610 1150 7 FreeSans 160 0 240 0 S1C
+port 4 w
+flabel metal1 80 1990 80 1990 1 FreeSans 160 0 0 240 Cl1
+port 8 n
+flabel metal1 1160 1990 1160 1990 1 FreeSans 160 0 0 240 Cl2
+port 10 n
+flabel metal1 630 1990 630 1990 1 FreeSans 160 0 0 240 PWR
+port 14 n
+flabel metal1 290 1990 290 1990 1 FreeSans 160 0 0 240 GND
+port 13 n
+flabel metal1 440 1990 440 1990 1 FreeSans 160 0 0 240 p1T
+port 7 n
+flabel metal1 800 1990 800 1990 1 FreeSans 160 0 0 240 p2T
+port 9 n
+flabel metal1 1240 1990 1240 1990 1 FreeSans 160 0 0 240 p0T
+port 5 n
+flabel metal1 1070 1990 1070 1990 1 FreeSans 160 0 0 240 p0C
+port 6 n
+flabel metal1 0 1990 0 1990 1 FreeSans 160 0 0 240 p3T
+port 11 n
+flabel metal1 170 1990 170 1990 1 FreeSans 160 0 0 240 p3C
+port 12 n
+flabel locali -360 1750 -360 1750 1 FreeSans 160 0 -240 0 S0T
+port 1 n
+flabel locali -360 1150 -360 1150 1 FreeSans 160 0 -240 0 S0C
+port 2 n
+flabel metal1 960 1990 960 1990 1 FreeSans 160 0 0 240 GN2
+port 15 n
+<< end >>
