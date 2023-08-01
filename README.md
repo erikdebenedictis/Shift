@@ -1,12 +1,9 @@
-This project is under development; the repository and associated site are not represented as functional at this time.<p>
+*This project is under development; the repository and associated site are not claimed to be functional at this time.
 
-<details>
+*Explanation of formatting. I am considering using md files so they can be used in three ways: (1) they will render in markdown under github, (2) they can be executed with ngspice, and (3) the ext3spice program can edit extracted circuits into them.
 
-<summary>Experiment with collapsed sections</summary>
-
-I am considering using markdown to store annotated ngspice scripts extracted from integrated circuit layout. This text could be considered annotation. The text below could be considered details that you may not want to look at every time. Ref: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-collapsed-sections. For example:
-
-```
+*The .md file you are looking at can be executed with ngspice. A clue to the dual use is that all paragraphs start with an asterisk. Sorry about that. However, ngspice will interpret lines that do not start with an asterisk. Circuits can also be collapsed visually, which is helpful when they are large and boring to read. The following is a collapsed ngspice circuit, actually a list of capacitors. <details><summary>List of capacitors</summary>
+*```
 	C0 gpio_analog[17] gpio_noesd[17] 3.97f
 	**gpio_analog[17] gpio_noesd[17]
 	C1 gpio_analog[17] io_oeb[23] 4.49f
@@ -681,8 +678,6 @@ I am considering using markdown to store annotated ngspice scripts extracted fro
 	**vssa1 vssd1
 	C336 vssa1 vssd2 15.5f
 	**vssa1 vssd2
-```
+*```</details>
 
-</details>
-
-For more information, please see <a href="http://revcomp.org">revcomp.org</a>.
+*For more information, please see <a href="http://revcomp.org">revcomp.org</a>.
